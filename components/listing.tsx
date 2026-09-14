@@ -95,10 +95,12 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
   useEffect(() => { // infinite scroll: reveal the next page when the sentinel nears the viewport
     const el = sentinel.current;
     if (!el) return;
-    const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) setShown((n) => n + PAGE); }, { rootMargin: "600px" });
+    const io = new IntersectionObserver((es) => {
+      if (es[0].isIntersecting) setShownFor((s) => ({ key, n: (s.key === key ? s.n : PAGE) + PAGE }));
+    }, { rootMargin: "600px" });
     io.observe(el);
     return () => io.disconnect();
-  }, [visible.length, shown]);
+  }, [visible.length, shown, key]);
 
   const loading = kws.length > 0 && progress.done < progress.total;
   const submit = (e: React.FormEvent) => {
