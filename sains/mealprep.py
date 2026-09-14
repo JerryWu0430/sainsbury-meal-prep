@@ -1,4 +1,6 @@
 """Rule-based meal-prep planner: pull discounted staples per food group, combine into batch-cook ideas."""
+import re
+
 from . import products
 
 GROUPS = {  # first QUICK entries of each are deliberately diverse
@@ -72,5 +74,12 @@ def plan(full=False, on_progress=lambda kw: None) -> dict:
     return {"picks": picks, "ideas": ideas}
 
 
+_NOISE = re.compile(
+    r"(Sainsbury's|Taste the Difference|SO Organic|Stamford Street Co\.|by Sainsbury's|British|Fresh|Each|Pack|"
+    r"\b\d+(\.\d+)?\s?(g|kg|ml|l|litre|x\s?\d+)\b|\b\d+\s?x\b|,)", re.I)
+
+
 def _short(name: str) -> str:
-    return name.replace("Sainsbury's", "").replace("Taste the Difference", "").replace(",", "").split(" x")[0].strip()
+    """'Sainsbury's 1kg British Chicken Breast Mini Fillets' -> 'Chicken Breast Mini Fillets'."""
+    words = _NOISE.sub(" ", name).split()
+    return " ".join(words[:5]) or name
