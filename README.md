@@ -42,7 +42,7 @@ npm install && uv sync
 npm run dev          # next dev :3000 + uvicorn :8000 (rewrites proxy /api/* in dev)
 ```
 
-Deploys on push to `main`. Responses carry `Cache-Control: s-maxage=21600` so Vercel's CDN absorbs repeat hits; the Python function itself caches in `/tmp` (best-effort). Datacenter IPs may trip Akamai more than a laptop — if `/api/*` starts returning 5xx with "HTTP 403 after retries", back off.
+Deploys on push to `main`; functions pinned to **lhr1 (London)** via `vercel.json` `regions` — check with `curl -sI …/api/store | grep x-vercel-id` (`lhr1::lhr1`). Responses carry `Cache-Control: s-maxage=21600` so Vercel's CDN absorbs repeat hits; the Python function itself caches in `/tmp` (best-effort). Datacenter IPs may trip Akamai more than a laptop — if `/api/*` starts returning 5xx with "HTTP 403 after retries", back off.
 
 ## CLI
 
