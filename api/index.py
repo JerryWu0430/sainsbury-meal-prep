@@ -4,10 +4,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make `sains` importable on Vercel
 
-from fastapi import FastAPI, Query, Response
+from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 
-from sains import mealprep, products, store
+from sains import agent, mealprep, products, store
 from sains.cli import NEW_KWS, STAPLES
+from sains.config import MODEL, STORE_CODE
 
 app = FastAPI(title="sains api")
 CACHE_HDR = {"Cache-Control": "public, s-maxage=21600, stale-while-revalidate=3600"}  # 6h at Vercel's CDN
@@ -27,9 +30,35 @@ def _multi(kws: list[str], **opts) -> list[dict]:
 
 
 @app.get("/api/store")
-def get_store(res: Response):
+def get_store(res: Response, store_code: str | None = Query(None, alias="store")):
     res.headers.update(CACHE_HDR)
-    return store.summary(store.info())
+    return store.summary(store.info(store_code or STORE_CODE))
+
+
+@app.get("/api/stores")
+def get_stores(res: Response, q: str, limit: int = Query(8, le=20)):
+    """Nearest stores to a UK postcode / outcode / place name."""
+    res.headers.update(CACHE_HDR)
+    try:
+        return store.find(q, limit)
+    except LookupError as e:
+        raise HTTPException(404, str(e))
+
+
+class Ask(BaseModel):
+    question: str
+    store: str | None = None
+
+
+@app.post("/api/ask")
+async def post_ask(body: Ask):
+    """Streams the agent's markdown answer as plain text chunks."""
+    try:
+        agent.check_model()
+    except agent.ConfigError as e:
+        raise HTTPException(503, str(e))
+    gen = agent.stream(body.question, body.store or STORE_CODE)
+    return StreamingResponse(gen, media_type="text/plain; charset=utf-8", headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no", "X-Model": MODEL})
 
 
 @app.get("/api/offers")
