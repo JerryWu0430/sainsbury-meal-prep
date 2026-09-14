@@ -1,12 +1,39 @@
 # sainsbury-meal-prep
 
-Sainsbury's **Elephant & Castle** (40 New Kent Rd, SE1 6TJ, store #2499): what's on offer, what's new, and rule-based meal-prep ideas built from current discounts. Ships as a CLI, a JSON API, and a Next.js/shadcn dashboard.
+Sainsbury's **Elephant & Castle** by default (40 New Kent Rd, SE1 6TJ, store #2499) — or any store you pick: what's on offer, what's new, rule-based meal-prep ideas, and an LLM agent that can use all of it. Ships as a CLI, a JSON API, and a Next.js/shadcn dashboard.
+
+## Agent (`sains ask`, `/ask`)
+
+[pydantic-ai](https://ai.pydantic.dev) agent with tools over the scraper: `search_products`, `best_offers`, `meal_prep_plan`, `store_details`, `find_stores`. Instructions carry the chosen store, today's hours and the scraping etiquette (≤ 6 tool calls). The **provider is one env var** — pydantic-ai's model string is the universal adapter:
+
+```sh
+cp .env.example .env
+SAINS_MODEL=anthropic:claude-sonnet-5        ANTHROPIC_API_KEY=…
+SAINS_MODEL=google-gla:gemini-2.5-flash      GEMINI_API_KEY=…
+SAINS_MODEL=vercel:anthropic/claude-sonnet-5 VERCEL_AI_GATEWAY_API_KEY=…   # one key, any provider
+SAINS_MODEL=test                             # no key: pydantic-ai's fake model, still runs the tools
+
+uv run sains ask "plan 4 lunches under £12 from today's offers"
+uv run sains chat                            # multi-turn
+```
+
+Web: `/ask` streams the answer (`POST /api/ask {question, store}` → `text/plain` chunks). Without a key the API answers `503` with the exact env var to set. On Vercel add `SAINS_MODEL` + the key under Project → Environment Variables.
+
+## Location
+
+```sh
+uv run sains stores "SE1 6TJ"      # postcode / outcode ("SW9") / place ("Brixton") → nearest stores + km
+uv run sains store 6028            # hours/facilities for that store
+SAINS_STORE=6028 uv run sains ask …
+```
+
+Geocoding: postcodes.io for UK postcodes/outcodes, Nominatim for place names (cached 30 days). The dashboard's sidebar has **Change** → picker; the choice persists in `localStorage` and is sent to `/api/store` and `/api/ask`. Product/offer data is the national online range regardless of store — only hours, facilities and the agent's context are store-specific.
 
 ## Web (Vercel)
 
 ```
-api/index.py      FastAPI → Vercel Python function   /api/store /api/offers /api/new /api/search /api/mealprep /api/item/{uid}
-app/, components/ Next.js 16 + TS + shadcn (Base UI) dashboard — sidebar nav: Offers · New in · Meal prep · Search
+api/index.py      FastAPI → Vercel Python function   /api/store?store= /api/stores?q= /api/offers /api/new /api/search /api/mealprep /api/item/{uid} POST /api/ask
+app/, components/ Next.js 16 + TS + shadcn (Base UI) dashboard — sidebar nav: Offers · New in · Meal prep · Search · Ask
                   Instrument Sans/Serif, product thumbnails hotlinked from assets.sainsburys-groceries.co.uk (plain S3)
 ```
 
