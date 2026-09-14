@@ -74,6 +74,19 @@ Client fetches **one keyword at a time, two in flight** — rows stream in as ea
 
 **Nectar:** of ~460 current offers, ~450 are Nectar Prices — that's Sainsbury's strategy, not a filter of ours. The **All / Nectar / No card** toggle and **£/unit** sort exist so card-free shoppers can still find the cheap stuff.
 
+## Many users ≠ many scrapes (ban prevention)
+
+Whose IP is at risk: **Vercel's London egress pool**, not yours — a block would 503 the site's API, not your home connection. Your own IP is only used by the CLI. Layers, outermost first:
+
+1. **CDN dedupes globally** — every `/api/search?q=…` URL is cached 6 h (+24 h stale-while-revalidate). N users, same keyword → 1 scrape. Repeat hits never reach Python.
+2. **Internal callers go through the CDN too** — on Vercel, `products.search()` fetches the public `/api/search` URL (agent tools, `/api/offers`, meal prep); only `/api/search` itself scrapes (`direct=True`). So an Ask question about chicken reuses the chicken entry everyone else warmed.
+3. **Throttle** — ≥1.5 s + jitter between live requests per instance; page size 60; 1 page per keyword by default.
+4. **Backoff + circuit breaker** — 403/429 → 3 exponential retries, then that instance **stops scraping for 30 min** and answers `503 Retry-After: 1800`; the CDN keeps serving stale.
+5. **Agent cap** — `UsageLimits(request_limit=10)` bounds tool calls per question; instructions ask for ≤ 6.
+6. **Cron warm-up** — default URLs refreshed daily, so most traffic is a cache hit before anyone arrives.
+
+Known gap: the throttle and breaker are **per function instance**. A burst of *distinct, uncached* searches from many users can spin up parallel instances → parallel scrapes. Closing it needs shared state (the Vercel Marketplace **Redis** integration): a global token bucket (1 req / 1.5 s), a per-URL lock so concurrent misses coalesce, and a shared breaker flag. Not provisioned yet.
+
 ## How it scrapes (and why it's gentle)
 
 No HTML parsing. Two public JSON endpoints the website itself uses:
