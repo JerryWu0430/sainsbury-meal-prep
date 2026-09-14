@@ -1,6 +1,22 @@
 # sainsbury-meal-prep
 
-CLI for Sainsbury's **Elephant & Castle** (40 New Kent Rd, SE1 6TJ, store #2499): what's on offer, what's new, and rule-based meal-prep ideas built from current discounts.
+Sainsbury's **Elephant & Castle** (40 New Kent Rd, SE1 6TJ, store #2499): what's on offer, what's new, and rule-based meal-prep ideas built from current discounts. Ships as a CLI, a JSON API, and a Next.js/shadcn dashboard.
+
+## Web (Vercel)
+
+```
+api/index.py      FastAPI → Vercel Python function   /api/store /api/offers /api/new /api/search /api/mealprep /api/item/{uid}
+app/, components/ Next.js 16 + TS + shadcn dashboard  (tabs: Offers · New in · Meal prep · Search)
+```
+
+```sh
+npm install && uv sync
+npm run dev          # next dev :3000 + uvicorn :8000 (rewrites proxy /api/* in dev)
+```
+
+Deploys on push to `main`. Responses carry `Cache-Control: s-maxage=21600` so Vercel's CDN absorbs repeat hits; the Python function itself caches in `/tmp` (best-effort). Datacenter IPs may trip Akamai more than a laptop — if `/api/*` starts returning 5xx with "HTTP 403 after retries", back off.
+
+## CLI
 
 ```sh
 uv sync

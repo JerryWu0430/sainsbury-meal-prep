@@ -1,5 +1,5 @@
 """Thin, throttled, cached HTTP layer. curl_cffi impersonates Chrome TLS (plain curl/requests get 403)."""
-import hashlib, json, random, time
+import hashlib, json, os, random, time
 from pathlib import Path
 
 from curl_cffi import requests
@@ -8,7 +8,8 @@ from .config import CACHE_TTL_S, MIN_GAP_S
 
 PRODUCT = "https://www.sainsburys.co.uk/groceries-api/gol-services/product/v1/product"
 STORES = "https://stores.sainsburys.co.uk/api/v1/stores"
-CACHE = Path.home() / ".cache" / "sains"
+# serverless (Vercel) has only /tmp writable; cache is best-effort there
+CACHE = Path("/tmp/sains") if os.environ.get("VERCEL") else Path.home() / ".cache" / "sains"
 
 _session = None
 _last = 0.0

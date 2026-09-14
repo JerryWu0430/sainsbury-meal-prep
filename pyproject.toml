@@ -3,7 +3,13 @@ name = "sainsbury-meal-prep"
 version = "0.1.0"
 description = "CLI: browse Sainsbury's (Elephant & Castle) offers, new-in items & meal-prep ideas"
 requires-python = ">=3.13"
-dependencies = ["curl-cffi>=0.7", "typer>=0.12", "rich>=13"]
+dependencies = [
+    "curl-cffi>=0.7",
+    "typer>=0.12",
+    "rich>=13",
+    "fastapi>=0.141.1",
+    "uvicorn>=0.53.0",
+]
 
 [project.scripts]
 sains = "sains.cli:app"
