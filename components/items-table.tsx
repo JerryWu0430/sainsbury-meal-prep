@@ -5,10 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import type { Item } from "@/lib/api";
 
 const gbp = (n: number | null) => (n == null ? "" : `£${n.toFixed(2)}`);
+const today = () => new Date().toISOString().slice(0, 10);
 
 export function Thumb({ src, size = 40 }: { src: string; size?: number }) {
   // product shots are white-background JPEGs; 1px low-alpha outline gives them an edge on any surface
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- hotlinked from Sainsbury's S3; next/image would proxy every thumb through Vercel for no gain at 40px
     <img src={src} alt="" width={size} height={size} loading="lazy" decoding="async"
       className="shrink-0 rounded-md bg-white object-cover outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
       style={{ width: size, height: size }} />
@@ -57,7 +59,7 @@ export function ItemsTable({ items, loading, error }: { items?: Item[]; loading:
               {i.was && <div className="text-muted-foreground text-xs line-through">{gbp(i.was)}</div>}
             </TableCell>
             <TableCell className="hidden whitespace-normal sm:table-cell"><Deal i={i} /></TableCell>
-            <TableCell className="text-muted-foreground hidden text-xs tabular-nums md:table-cell">{i.ends.slice(5)}</TableCell>
+            <TableCell className="text-muted-foreground hidden text-xs tabular-nums md:table-cell">{i.ends === today() ? <span className="text-amber-600 dark:text-amber-400">today</span> : i.ends.slice(5)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

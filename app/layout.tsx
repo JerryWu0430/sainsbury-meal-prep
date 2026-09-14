@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { StoreProvider } from "@/lib/store-context";
+import { ThemeProvider } from "next-themes";
 
 const sans = Instrument_Sans({ variable: "--font-instrument-sans", subsets: ["latin"] });
 const serif = Instrument_Serif({ variable: "--font-instrument-serif", subsets: ["latin"], weight: "400" });
@@ -16,8 +17,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable} h-full antialiased`}>
+    <html lang="en" className={`${sans.variable} ${serif.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        {/* product thumbnails come from this origin on every list page */}
+        <link rel="preconnect" href="https://assets.sainsburys-groceries.co.uk" />
+      </head>
       <body className="min-h-full font-sans">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <StoreProvider>
           <SidebarProvider>
             <AppSidebar />
@@ -27,6 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </SidebarInset>
           </SidebarProvider>
         </StoreProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

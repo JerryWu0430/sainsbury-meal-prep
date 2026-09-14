@@ -14,17 +14,30 @@ export type Store = {
   hours: [string, string][]; facilities: string[];
 };
 
-export function useApi<T>(url: string | null) {
-  const [state, set] = useState<{ data?: T; error?: string; loading: boolean }>({ loading: !!url });
+// in-memory cache: survives route changes within the tab (React state doesn't); CDN handles cross-session
+const mem = new Map<string, unknown>();
+
+export async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
+  if (mem.has(url)) return mem.get(url) as T;
+  const r = await fetch(url, { signal });
+  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  const d = (await r.json()) as T;
+  mem.set(url, d);
+  return d;
+}
+
+export function useApi<T>(url: string | null): { data?: T; error?: string; loading: boolean } {
+  const [st, setSt] = useState<{ url: string; data?: T; error?: string }>();
   useEffect(() => {
-    if (!url) return;
-    let live = true;
-    set({ loading: true });
-    fetch(url)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status} ${r.statusText}`))))
-      .then((d) => live && set({ data: d, loading: false }))
-      .catch((e) => live && set({ error: String(e.message ?? e), loading: false }));
-    return () => { live = false; };
+    if (!url || mem.has(url)) return;
+    const ctrl = new AbortController();
+    fetchJson<T>(url, ctrl.signal)
+      .then((data) => setSt({ url, data }))
+      .catch((e) => { if (!ctrl.signal.aborted) setSt({ url, error: String(e.message ?? e) }); });
+    return () => ctrl.abort();
   }, [url]);
-  return state;
+  if (!url) return { loading: false };
+  if (st?.url === url) return { data: st.data, error: st.error, loading: false };
+  if (mem.has(url)) return { data: mem.get(url) as T, loading: false };
+  return { loading: true };
 }

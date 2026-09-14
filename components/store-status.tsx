@@ -1,7 +1,9 @@
 "use client";
 import { useApi, type Store } from "@/lib/api";
 import { useStore } from "@/lib/store-context";
-import { StorePicker } from "./store-picker";
+import dynamic from "next/dynamic";
+
+const StorePicker = dynamic(() => import("./store-picker").then((m) => m.StorePicker), { ssr: false, loading: () => <span className="text-muted-foreground px-1.5 text-xs">Change</span> });
 
 export function StoreStatus() {
   const { code } = useStore();
