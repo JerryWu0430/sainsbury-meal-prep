@@ -6,6 +6,7 @@ os.environ.setdefault("PYDANTIC_AI_NO_BANNER", "1")
 from datetime import date
 
 from pydantic_ai import Agent, RunContext
+from pydantic_ai.usage import UsageLimits
 
 from . import mealprep, products, store
 from .config import KEY_ENV, MODEL, STORE_CODE
@@ -37,6 +38,7 @@ def _trim(items: list[dict], limit: int) -> list[dict]:
 
 # model is passed at run time so importing this module never needs an API key
 agent = Agent(deps_type=Deps, retries=2)
+LIMITS = UsageLimits(request_limit=10)  # hard cap on model round-trips → bounded tool calls per question
 
 
 @agent.instructions
@@ -95,11 +97,11 @@ def find_stores(query: str) -> dict:
 
 def ask(question: str, store_code: str = STORE_CODE, history=None, model: str = MODEL):
     check_model(model)
-    return agent.run_sync(question, model=model, deps=Deps(store_code), message_history=history)
+    return agent.run_sync(question, model=model, deps=Deps(store_code), message_history=history, usage_limits=LIMITS)
 
 
 async def stream(question: str, store_code: str = STORE_CODE, model: str = MODEL):
     check_model(model)
-    async with agent.run_stream(question, model=model, deps=Deps(store_code)) as result:
+    async with agent.run_stream(question, model=model, deps=Deps(store_code), usage_limits=LIMITS) as result:
         async for delta in result.stream_text(delta=True):
             yield delta

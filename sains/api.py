@@ -13,6 +13,12 @@ CACHE = Path("/tmp/sains") if os.environ.get("VERCEL") else Path.home() / ".cach
 
 _session = None
 _last = 0.0
+_blocked_until = 0.0
+COOLDOWN_S = 30 * 60  # after a 403/429 streak, stop hitting Sainsbury's from this instance for a while
+
+
+class Blocked(RuntimeError):
+    pass
 
 
 def _sess():
@@ -31,11 +37,14 @@ def _throttle():
 
 
 def get(url: str, params: dict | None = None, ttl: int = CACHE_TTL_S, headers: dict | None = None) -> dict:
+    global _blocked_until
     key = hashlib.sha1(json.dumps([url, params], sort_keys=True).encode()).hexdigest()
     f = CACHE / f"{key}.json"
     if f.exists() and time.time() - f.stat().st_mtime < ttl:
         return json.loads(f.read_text())
 
+    if time.time() < _blocked_until:
+        raise Blocked(f"scraping paused for {int(_blocked_until - time.time())}s after a block — serving cache only")
     status = None
     for attempt in range(3):
         _throttle()
@@ -50,7 +59,8 @@ def get(url: str, params: dict | None = None, ttl: int = CACHE_TTL_S, headers: d
             time.sleep(5 * 2**attempt)
             continue
         r.raise_for_status()
-    raise RuntimeError(f"HTTP {status} after retries — Akamai is blocking; stop and retry later")
+    _blocked_until = time.time() + COOLDOWN_S
+    raise Blocked(f"HTTP {status} after retries — Akamai is blocking; pausing scrapes for {COOLDOWN_S // 60} min")
 
 
 def clear_cache() -> int:

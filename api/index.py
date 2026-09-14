@@ -13,10 +13,16 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from sains import agent, mealprep, products, store
+from sains.api import Blocked
 from sains.cli import NEW_KWS, STAPLES
 from sains.config import MODEL, STORE_CODE
 
 app = FastAPI(title="sains api")
+
+
+@app.exception_handler(Blocked)
+def _blocked(_, exc: Blocked):  # 503 + Retry-After so the CDN keeps serving stale and clients back off
+    return Response(str(exc), status_code=503, media_type="text/plain", headers={"Retry-After": "1800", "Cache-Control": "no-store"})
 CACHE_HDR = {"Cache-Control": "public, s-maxage=21600, stale-while-revalidate=86400"}  # 6h fresh at the CDN, then serve stale instantly while refreshing
 
 
@@ -82,7 +88,7 @@ def get_new(res: Response, kw: str | None = None):
 @app.get("/api/search")
 def get_search(res: Response, q: str, offers: bool = False, new: bool = False, sort: str = "relevance", pages: int = Query(1, le=3)):
     res.headers.update(CACHE_HDR)
-    return products.search(q, offers=offers, new=new, sort=sort, max_pages=pages)
+    return products.search(q, offers=offers, new=new, sort=sort, max_pages=pages, direct=True)
 
 
 @app.get("/api/mealprep")

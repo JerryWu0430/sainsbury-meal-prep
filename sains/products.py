@@ -1,11 +1,26 @@
 """Product search over the gol-services product API (keyword search is the only public entry point)."""
+import os
+
+import httpx
+
 from .api import PRODUCT, get
 from .config import MAX_PAGES, PAGE_SIZE
+
+# On Vercel every internal caller (agent tools, /api/offers, meal prep) goes through the public /api/search URL,
+# so the CDN dedupes identical queries across all users and instances. /api/search itself passes direct=True.
+CDN_HOST = os.environ.get("VERCEL_PROJECT_PRODUCTION_URL")
 
 SORTS = {"relevance": "-relevance", "price": "price", "-price": "-price", "rating": "-customer rating"}
 
 
-def search(keyword: str, *, offers=False, new=False, sort="relevance", max_pages=MAX_PAGES) -> list[dict]:
+def search(keyword: str, *, offers=False, new=False, sort="relevance", max_pages=MAX_PAGES, direct=False) -> list[dict]:
+    if CDN_HOST and not direct and max_pages == 1:
+        try:
+            r = httpx.get(f"https://{CDN_HOST}/api/search", params={"q": keyword, "offers": offers, "new": new, "sort": sort}, timeout=90)
+            r.raise_for_status()
+            return r.json()
+        except httpx.HTTPError:
+            pass  # fall through to a direct scrape
     flags = ",".join(f for f, on in (("Offers", offers), ("new", new)) if on)
     out: list[dict] = []
     for page in range(1, max_pages + 1):
