@@ -4,6 +4,7 @@ from pathlib import Path
 
 from curl_cffi import requests
 
+from . import shared
 from .config import CACHE_TTL_S, MIN_GAP_S
 
 PRODUCT = "https://www.sainsburys.co.uk/groceries-api/gol-services/product/v1/product"
@@ -42,25 +43,43 @@ def get(url: str, params: dict | None = None, ttl: int = CACHE_TTL_S, headers: d
     f = CACHE / f"{key}.json"
     if f.exists() and time.time() - f.stat().st_mtime < ttl:
         return json.loads(f.read_text())
+    if (data := shared.cache_get(key)) is not None:  # another instance already fetched it
+        _store(f, data)
+        return data
 
-    if time.time() < _blocked_until:
-        raise Blocked(f"scraping paused for {int(_blocked_until - time.time())}s after a block — serving cache only")
-    status = None
-    for attempt in range(3):
-        _throttle()
-        r = _sess().get(url, params=params, headers={"Accept": "application/json", **(headers or {})}, timeout=20)
-        status = r.status_code
-        if status == 200:
-            data = r.json()
-            CACHE.mkdir(parents=True, exist_ok=True)
-            f.write_text(json.dumps(data))
+    left = max(int(_blocked_until - time.time()), shared.blocked_for())
+    if left > 0:
+        raise Blocked(f"scraping paused for {left}s after a block — serving cache only")
+    if not shared.lock(key):  # same URL in flight elsewhere: wait for its result instead of scraping twice
+        if (data := shared.wait_for(key)) is not None:
+            _store(f, data)
             return data
-        if status in (403, 429):  # bot-blocked / rate-limited: exponential backoff
-            time.sleep(5 * 2**attempt)
-            continue
-        r.raise_for_status()
-    _blocked_until = time.time() + COOLDOWN_S
-    raise Blocked(f"HTTP {status} after retries — Akamai is blocking; pausing scrapes for {COOLDOWN_S // 60} min")
+    try:
+        status = None
+        for attempt in range(3):
+            shared.acquire_slot()  # global: one scrape per MIN_GAP_S across every instance
+            _throttle()            # local: same gap within this process
+            r = _sess().get(url, params=params, headers={"Accept": "application/json", **(headers or {})}, timeout=20)
+            status = r.status_code
+            if status == 200:
+                data = r.json()
+                _store(f, data)
+                shared.cache_set(key, data, ttl)
+                return data
+            if status in (403, 429):  # bot-blocked / rate-limited: exponential backoff
+                time.sleep(5 * 2**attempt)
+                continue
+            r.raise_for_status()
+        _blocked_until = time.time() + COOLDOWN_S
+        shared.set_blocked(COOLDOWN_S)
+        raise Blocked(f"HTTP {status} after retries — Akamai is blocking; pausing scrapes for {COOLDOWN_S // 60} min")
+    finally:
+        shared.unlock(key)
+
+
+def _store(f: Path, data) -> None:
+    CACHE.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps(data))
 
 
 def clear_cache() -> int:

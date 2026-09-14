@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()  # local .env; on Vercel use project env vars
+load_dotenv(".env.local")  # `vercel env pull` output (REDIS_URL etc.)
 
 # Default store: Sainsbury's Elephant & Castle, 40 New Kent Rd, SE1 6TJ. Override w/ SAINS_STORE or `sains stores <postcode>`.
 STORE_CODE = os.environ.get("SAINS_STORE", "2499")
