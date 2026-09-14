@@ -1,29 +1,30 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Instrument_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const sans = Instrument_Sans({ variable: "--font-instrument-sans", subsets: ["latin"] });
+const serif = Instrument_Serif({ variable: "--font-instrument-serif", subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
-  title: "Sainsbury's E&C · offers & meal prep",
+  title: { default: "Sainsbury's E&C", template: "%s · Sainsbury's E&C" },
   description: "Offers, new-in and meal-prep ideas for Sainsbury's Elephant & Castle",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${sans.variable} ${serif.variable} h-full antialiased`}>
+      <body className="min-h-full font-sans">
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <SiteHeader />
+            <main className="mx-auto w-full max-w-5xl flex-1 p-4 md:p-6">{children}</main>
+          </SidebarInset>
+        </SidebarProvider>
+      </body>
     </html>
   );
 }

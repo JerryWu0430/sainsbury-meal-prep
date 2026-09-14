@@ -6,7 +6,8 @@ Sainsbury's **Elephant & Castle** (40 New Kent Rd, SE1 6TJ, store #2499): what's
 
 ```
 api/index.py      FastAPI → Vercel Python function   /api/store /api/offers /api/new /api/search /api/mealprep /api/item/{uid}
-app/, components/ Next.js 16 + TS + shadcn dashboard  (tabs: Offers · New in · Meal prep · Search)
+app/, components/ Next.js 16 + TS + shadcn (Base UI) dashboard — sidebar nav: Offers · New in · Meal prep · Search
+                  Instrument Sans/Serif, product thumbnails hotlinked from assets.sainsburys-groceries.co.uk (plain S3)
 ```
 
 ```sh
