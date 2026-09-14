@@ -59,6 +59,21 @@ uv run sains --json offers         # any command as JSON
 uv run sains cache-clear
 ```
 
+## Speed & caching
+
+Measured on prod (Playwright, desktop, 2026-09-15): time to **first product row** went from ~18 s (one big response) to **1.2 s**, all 452 rows in 3.8 s; repeat visits 0.1 s. Lighthouse 99–100.
+
+| layer | what | TTL |
+|---|---|---|
+| browser | `mem` Map in `lib/api.ts` — survives route changes within the tab | tab lifetime |
+| Vercel CDN | every `/api/search?q=<kw>…` URL cached separately (`x-vercel-cache: HIT` ≈ 40 ms) | 6 h fresh, then 24 h stale-while-revalidate |
+| function `/tmp` | curl_cffi responses per instance (best-effort) | 6 h |
+| cron | `/api/warm` 06:00 UTC re-fetches the default URLs through the public host so the CDN is warm before you wake up (`CRON_SECRET` gates it if set) | daily |
+
+Client fetches **one keyword at a time, two in flight** — rows stream in as each lands, cold loads never put more than 2 scrapes on Sainsbury's, and each URL becomes a reusable cache entry. Lists render 20 rows and infinite-scroll the rest.
+
+**Nectar:** of ~460 current offers, ~450 are Nectar Prices — that's Sainsbury's strategy, not a filter of ours. The **All / Nectar / No card** toggle and **£/unit** sort exist so card-free shoppers can still find the cheap stuff.
+
 ## How it scrapes (and why it's gentle)
 
 No HTML parsing. Two public JSON endpoints the website itself uses:
@@ -83,3 +98,22 @@ Guardrails in `sains/config.py`:
 - `mealprep` quick mode ≈ 8 requests cold; `--full` ≈ 21
 
 Personal use only; be nice to their servers.
+
+## Dev
+
+```sh
+npm run dev            # next :3000 + uvicorn :8000
+uv run pytest -q       # offline unit tests
+npm run lint && npm run build
+```
+CI (GitHub Actions) runs pytest + lint + build on every push. Dark mode follows the system, toggle in the sidebar.
+
+## Backlog / ideas
+
+- Persist offers daily (Vercel Blob/Marketplace KV) → price history, "new this week", "back on offer" diffs
+- Shopping list from a meal-prep idea (tick off in store, share link)
+- Push/email digest when a favourite drops ≥ 30 %
+- Category browse via `filter[cat_Category]` (needs a keyword; ids in `controls.cat_filters`)
+- Pin favourites; exclude keywords / diets (no fish, veggie) — also as agent preferences
+- Streaming NDJSON `/api/offers` for the CLI/agent path (web already streams per keyword)
+- Per-store range: not public; nearest realistic proxy is the "Local vs main" store type
