@@ -37,6 +37,9 @@ def slim(p: dict) -> dict:
         pct = round((1 - price / was) * 100)
     unit = p.get("unit_price") or {}
     url = p.get("full_url", "")
+    assets = p.get("assets") or {}
+    sizes = ((assets.get("images") or [{}])[0].get("sizes") or [])
+    thumb = next((s["url"] for s in sizes if s.get("width") == 140), None) or assets.get("plp_image") or p.get("image", "")
     return {
         "uid": p["product_uid"],
         "name": p["name"],
@@ -50,4 +53,6 @@ def slim(p: dict) -> dict:
         "life": next((l["text"] for l in p.get("labels", []) if "life" in l.get("text", "").lower()), ""),
         "available": p.get("is_available", True),
         "url": "https" + url if url.startswith("://") else url,
+        "image": assets.get("plp_image") or p.get("image", ""),  # plain S3, hotlinkable, cache 24h
+        "thumb": thumb,
     }
