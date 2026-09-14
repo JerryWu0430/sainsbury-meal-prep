@@ -7,6 +7,7 @@ export type Item = {
 };
 export type Idea = { idea: string; items: Item[]; cost: number; per_portion: number };
 export type Plan = { picks: Record<string, Item[]>; ideas: Idea[] };
+export type NearbyStore = { code: string; name: string; type: string; address: string; km: number; open_now: boolean | null; open_until: string | null };
 export type Store = {
   name: string; code: string; address: string; tel: string; status: string;
   open_now: { is_open: boolean; open_until: string } | null;

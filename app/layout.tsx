@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { StoreProvider } from "@/lib/store-context";
 
 const sans = Instrument_Sans({ variable: "--font-instrument-sans", subsets: ["latin"] });
 const serif = Instrument_Serif({ variable: "--font-instrument-serif", subsets: ["latin"], weight: "400" });
@@ -17,13 +18,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} h-full antialiased`}>
       <body className="min-h-full font-sans">
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <SiteHeader />
-            <main className="mx-auto w-full max-w-5xl flex-1 p-4 md:p-6">{children}</main>
-          </SidebarInset>
-        </SidebarProvider>
+        <StoreProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <SiteHeader />
+              <main className="mx-auto w-full max-w-5xl flex-1 p-4 md:p-6">{children}</main>
+            </SidebarInset>
+          </SidebarProvider>
+        </StoreProvider>
       </body>
     </html>
   );
