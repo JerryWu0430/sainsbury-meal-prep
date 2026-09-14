@@ -5,7 +5,10 @@ from rich import box
 from rich.console import Console
 from rich.table import Table
 
+from rich.markdown import Markdown
+
 from . import api, mealprep, products, store
+from .config import MODEL, STORE_CODE
 
 app = typer.Typer(help="Sainsbury's Elephant & Castle: offers, new-in, meal prep.", no_args_is_help=True, add_completion=False)
 con = Console()
@@ -78,10 +81,29 @@ def item(uid: str):
     print(json.dumps(products.detail(uid), indent=1))
 
 
+@app.command()
+def stores(query: str, limit: int = 8):
+    """Nearest Sainsbury's to a postcode, outcode or place (e.g. "SE1 6TJ", "SW9", "Brixton")."""
+    try:
+        r = store.find(query, limit)
+    except LookupError as e:
+        raise typer.BadParameter(str(e))
+    if state["json"]:
+        print(json.dumps(r, indent=1)); return
+    t = Table(title=f"near {r['label']}", header_style="bold", box=box.SIMPLE)
+    for c in ("code", "name", "type", "km", "address", "open"):
+        t.add_column(c, no_wrap=c != "address")
+    for s in r["stores"]:
+        t.add_row(s["code"], s["name"], s["type"], f"{s['km']:.1f}", s["address"],
+                  f"[green]until {s['open_until']}[/]" if s["open_now"] else "[red]closed[/]")
+    con.print(t)
+    con.print(f"[dim]use: sains store <code> · SAINS_STORE=<code> · sains ask --store <code>[/]")
+
+
 @app.command(name="store")
-def store_cmd():
-    """Elephant & Castle store: hours, facilities, status."""
-    s = store.summary(store.info())
+def store_cmd(code: str = typer.Argument(None, help=f"store code (default {STORE_CODE}, or SAINS_STORE)")):
+    """A store's hours, facilities, status."""
+    s = store.summary(store.info(code or STORE_CODE))
     if state["json"]:
         print(json.dumps(s, indent=1)); return
     con.print(f"[bold]{s['name']}[/] (#{s['code']}, {s['type']}/{s['cluster']})\n{s['address']} · {s['tel']}")
@@ -109,6 +131,35 @@ def mealprep_cmd(full: bool = typer.Option(False, "--full", help="search all key
         con.print(f"\n[bold]{n}. {idea['idea']}[/]  ≈ £{idea['cost']} → £{idea['per_portion']}/portion ×{mealprep.PORTIONS}")
         for i in idea["items"]:
             con.print(f"   • {i['name']} £{i['price']:.2f}" + (f" [green]({i['promo']})[/]" if i["promo"] else ""))
+
+
+@app.command()
+def ask(question: list[str], store_code: str = typer.Option(STORE_CODE, "--store", "-s"), model: str = typer.Option(MODEL, "--model", "-m", help="pydantic-ai model string")):
+    """Ask the grocery agent (needs an API key for the chosen model, see .env.example)."""
+    from . import agent  # lazy: pydantic-ai import is slow
+    try:
+        with con.status("thinking…"):
+            res = agent.ask(" ".join(question), store_code, model=model)
+    except agent.ConfigError as e:
+        raise typer.BadParameter(str(e))
+    print(res.output) if state["json"] else con.print(Markdown(res.output))
+
+
+@app.command()
+def chat(store_code: str = typer.Option(STORE_CODE, "--store", "-s"), model: str = typer.Option(MODEL, "--model", "-m")):
+    """Multi-turn chat with the grocery agent. Empty line or 'q' to quit."""
+    from . import agent
+    try:
+        agent.check_model(model)
+    except agent.ConfigError as e:
+        raise typer.BadParameter(str(e))
+    history = None
+    con.print(f"[dim]{model} · store {store_code} · q to quit[/]")
+    while (q := con.input("[bold]you>[/] ").strip()) and q.lower() not in ("q", "quit", "exit"):
+        with con.status("thinking…"):
+            res = agent.ask(q, store_code, history=history, model=model)
+        history = res.all_messages()
+        con.print(Markdown(res.output))
 
 
 @app.command(name="cache-clear")
