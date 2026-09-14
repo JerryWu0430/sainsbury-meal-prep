@@ -39,6 +39,14 @@ def _multi(kws: list[str], **opts) -> list[dict]:
     return out
 
 
+@app.get("/api/health")
+def get_health():
+    """Ops: is the shared layer live, is the breaker tripped, which region."""
+    from sains import shared
+    return {"redis": bool(shared._safe(lambda r: r.ping())), "blocked_for_s": shared.blocked_for(),
+            "region": os.environ.get("VERCEL_REGION"), "model": MODEL, "cdn_host": products.CDN_HOST}
+
+
 @app.get("/api/store")
 def get_store(res: Response, store_code: str | None = Query(None, alias="store")):
     res.headers.update(CACHE_HDR)

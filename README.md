@@ -85,7 +85,7 @@ Whose IP is at risk: **Vercel's London egress pool**, not yours — a block woul
 5. **Agent cap** — `UsageLimits(request_limit=10)` bounds tool calls per question; instructions ask for ≤ 6.
 6. **Cron warm-up** — default URLs refreshed daily, so most traffic is a cache hit before anyone arrives.
 
-Known gap: the throttle and breaker are **per function instance**. A burst of *distinct, uncached* searches from many users can spin up parallel instances → parallel scrapes. Closing it needs shared state (the Vercel Marketplace **Redis** integration): a global token bucket (1 req / 1.5 s), a per-URL lock so concurrent misses coalesce, and a shared breaker flag. Not provisioned yet.
+7. **Shared state (Redis, Vercel Marketplace)** — `sains/shared.py`: a **global slot** so at most one scrape starts per 1.5 s across *all* instances, a **per-URL lock** so simultaneous misses coalesce into one fetch (the others wait for its result), a **shared 6 h cache** and a **shared breaker**. Everything is a silent no-op without `REDIS_URL`. `GET /api/health` → `{"redis": true|false, "blocked_for_s", "region"}`.
 
 ## How it scrapes (and why it's gentle)
 
