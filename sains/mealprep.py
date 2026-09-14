@@ -9,10 +9,13 @@ GROUPS = {  # first QUICK entries of each are deliberately diverse
 }
 QUICK = 3  # keywords per group in quick mode (fewer live requests)
 # ready-made stuff is not a meal-prep ingredient
-JUNK = ("pot", "ready", "instant", "microwave", "pie", "kit", "meal", "sandwich", "wrap ", "snack", "grills", "crispy", "breaded", "battered", "soup", "salad")
+JUNK = ("pot", "ready", "instant", "microwave", "pie", "kit", "meal", "sandwich", "wrap ", "snack", "grills", "crispy", "breaded", "battered", "soup", "salad", "slices", "10kg", "5kg")
+MAX_PRICE = {"protein": 8.0, "carb": 5.0, "veg": 4.0, "sauce": 4.0}  # skip bulk packs that skew per-portion cost
 
 IDEAS = [  # (sauce substring, template)
     ("curry", "{p} curry over {c}, with {v}"),
+    ("korma", "{p} korma over {c}, with {v}"),
+    ("tikka", "{p} tikka over {c}, with {v}"),
     ("coconut", "Coconut {p} with {c} & {v}"),
     ("pesto", "Pesto {p} bake with {c} & {v}"),
     ("soy", "Soy-ginger {p} stir-fry on {c} with {v}"),
@@ -23,7 +26,7 @@ PORTIONS = 4
 
 def _ok(i: dict, group: str) -> bool:
     n = i["name"].lower()
-    return bool(i["available"] and i["price"] and (group == "sauce" or not any(j in n for j in JUNK)))
+    return bool(i["available"] and i["price"] and i["price"] <= MAX_PRICE[group] and not any(j in n for j in JUNK))
 
 
 def _pick(kw: str, group: str, on_progress) -> list[dict]:
