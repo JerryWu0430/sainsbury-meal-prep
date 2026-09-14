@@ -30,7 +30,7 @@ def _throttle():
     _last = time.time()
 
 
-def get(url: str, params: dict | None = None, ttl: int = CACHE_TTL_S) -> dict:
+def get(url: str, params: dict | None = None, ttl: int = CACHE_TTL_S, headers: dict | None = None) -> dict:
     key = hashlib.sha1(json.dumps([url, params], sort_keys=True).encode()).hexdigest()
     f = CACHE / f"{key}.json"
     if f.exists() and time.time() - f.stat().st_mtime < ttl:
@@ -39,7 +39,7 @@ def get(url: str, params: dict | None = None, ttl: int = CACHE_TTL_S) -> dict:
     status = None
     for attempt in range(3):
         _throttle()
-        r = _sess().get(url, params=params, headers={"Accept": "application/json"}, timeout=20)
+        r = _sess().get(url, params=params, headers={"Accept": "application/json", **(headers or {})}, timeout=20)
         status = r.status_code
         if status == 200:
             data = r.json()
