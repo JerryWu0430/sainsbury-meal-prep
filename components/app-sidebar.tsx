@@ -7,15 +7,17 @@ import {
 } from "@/components/ui/sidebar";
 import { NAV } from "@/lib/nav";
 import { StoreStatus } from "./store-status";
+import { ThemeToggle } from "./theme-toggle";
 
 export function AppSidebar() {
   const path = usePathname();
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="px-3 pt-3">
+      <SidebarHeader className="flex-row items-center justify-between px-3 pt-3">
         <Link href="/" className="font-serif text-xl leading-none tracking-tight group-data-[collapsible=icon]:hidden">
           Sainsbury&apos;s <span className="text-muted-foreground">E&amp;C</span>
         </Link>
+        <span className="group-data-[collapsible=icon]:hidden"><ThemeToggle /></span>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
