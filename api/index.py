@@ -1,10 +1,14 @@
 """FastAPI wrapper over the sains scraper — deployed as a Vercel Python function, also `uv run uvicorn api.index:app`."""
+import os
 import sys
 from pathlib import Path
+from urllib.parse import quote
+
+import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make `sains` importable on Vercel
 
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -13,7 +17,7 @@ from sains.cli import NEW_KWS, STAPLES
 from sains.config import MODEL, STORE_CODE
 
 app = FastAPI(title="sains api")
-CACHE_HDR = {"Cache-Control": "public, s-maxage=21600, stale-while-revalidate=3600"}  # 6h at Vercel's CDN
+CACHE_HDR = {"Cache-Control": "public, s-maxage=21600, stale-while-revalidate=86400"}  # 6h fresh at the CDN, then serve stale instantly while refreshing
 
 
 def _kws(kw: str | None, default: list[str]) -> list[str]:
@@ -24,7 +28,7 @@ def _multi(kws: list[str], **opts) -> list[dict]:
     seen, out = set(), []
     for k in kws:
         for i in products.search(k, **opts):
-            if i["uid"] not in seen:
+            if i["uid"] not in seen and i["price"] and i["available"]:
                 seen.add(i["uid"]); out.append(i)
     return out
 
@@ -85,6 +89,25 @@ def get_search(res: Response, q: str, offers: bool = False, new: bool = False, s
 def get_mealprep(res: Response, full: bool = False):
     res.headers.update(CACHE_HDR)
     return mealprep.plan(full=full)
+
+
+@app.get("/api/warm")
+def get_warm(request: Request):
+    """Vercel cron target: re-fetch the dashboard's default URLs through the public host so the CDN is warm."""
+    secret = os.environ.get("CRON_SECRET")
+    if secret and request.headers.get("authorization") != f"Bearer {secret}":
+        raise HTTPException(401)
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+    base = f"https://{host}" if host and "localhost" not in host else str(request.base_url).rstrip("/")
+    urls = [f"{base}/api/search?q={quote(k)}&offers={o}&new={n}" for k, o, n in
+            [(k, "true", "false") for k in STAPLES] + [(k, "false", "true") for k in NEW_KWS]] + [f"{base}/api/mealprep?full=false", f"{base}/api/store"]
+    out = {}
+    for u in urls:
+        try:
+            out[u.split("/api/", 1)[1]] = httpx.get(u, timeout=120).status_code
+        except Exception as e:  # keep warming the rest
+            out[u.split("/api/", 1)[1]] = str(e)[:60]
+    return out
 
 
 @app.get("/api/item/{uid}")
