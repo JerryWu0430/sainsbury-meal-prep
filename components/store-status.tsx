@@ -3,11 +3,13 @@ import { useApi, type Store } from "@/lib/api";
 import { useStore } from "@/lib/store-context";
 import dynamic from "next/dynamic";
 
-const StorePicker = dynamic(() => import("./store-picker").then((m) => m.StorePicker), { ssr: false, loading: () => <span className="text-muted-foreground px-1.5 text-xs">Change</span> });
+const StorePicker = dynamic(() => import("./store-picker").then((m) => m.StorePicker), { ssr: false, loading: () => <span className="text-muted-foreground px-2 text-xs">Change</span> });
 
 export function StoreStatus() {
   const { code } = useStore();
-  const { data: s } = useApi<Store>(`/api/store?store=${code}`);
+  const { data: s, error } = useApi<Store>(`/api/store?store=${code}`);
+  // a failed lookup used to read as a permanent "loading store…"
+  if (error) return <p role="alert" className="text-destructive px-2 text-xs">Store details unavailable — {error}</p>;
   if (!s) return <div className="text-muted-foreground px-2 text-xs">loading store…</div>;
   const open = s.open_now?.is_open;
   const today = s.hours[(new Date().getDay() + 6) % 7]; // hours[] is Mon-first, getDay() is Sun-first
@@ -18,7 +20,7 @@ export function StoreStatus() {
         <span className="ml-auto"><StorePicker /></span>
       </div>
       <div className="flex items-center gap-1.5">
-        <span aria-hidden className={`size-1.5 rounded-full ${open ? "bg-emerald-500" : "bg-red-500"}`} />
+        <span aria-hidden className={`size-1.5 rounded-full ${open ? "bg-emerald-600 dark:bg-emerald-500" : "bg-red-600 dark:bg-red-500"}`} />
         {open ? `Open until ${s.open_now?.open_until}` : "Closed"}
         <span className="text-muted-foreground">· today {today?.[1]}</span>
       </div>

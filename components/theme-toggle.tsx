@@ -9,11 +9,12 @@ export function ThemeToggle() {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false); // false on the server, true once hydrated
   const dark = mounted && resolvedTheme === "dark";
   return (
-    <Button variant="ghost" size="icon" className="size-7" aria-label={dark ? "Switch to light" : "Switch to dark"} onClick={() => setTheme(dark ? "light" : "dark")}>
-      {/* both icons stay in the DOM and cross-fade: opacity + scale + blur, no layout */}
-      <span className="relative grid size-4 place-items-center">
-        <Sun strokeWidth={1.75} className={`absolute size-4 transition-[opacity,scale,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] ${dark ? "scale-25 opacity-0 blur-[4px]" : "scale-100 opacity-100 blur-0"}`} />
-        <Moon strokeWidth={1.75} className={`absolute size-4 transition-[opacity,scale,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] ${dark ? "scale-100 opacity-100 blur-0" : "scale-25 opacity-0 blur-[4px]"}`} />
+    // size-7 keeps the visual weight; the pseudo-element takes the hit area to 44px (WCAG 2.5.5)
+    <Button variant="ghost" size="icon" aria-label={dark ? "Switch to light" : "Switch to dark"} onClick={() => setTheme(dark ? "light" : "dark")}
+      className="relative size-7 before:absolute before:top-1/2 before:left-1/2 before:size-11 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']">
+      <span className="t-icon-swap size-4 place-items-center" data-state={dark ? "b" : "a"}>
+        <Sun data-icon="a" strokeWidth={1.75} className="t-icon size-4" />
+        <Moon data-icon="b" strokeWidth={1.75} className="t-icon size-4" />
       </span>
     </Button>
   );

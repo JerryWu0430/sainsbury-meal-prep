@@ -2,6 +2,16 @@
 
 Sainsbury's **Elephant & Castle** by default (40 New Kent Rd, SE1 6TJ, store #2499) — or any store you pick: what's on offer, what's new, rule-based meal-prep ideas, and an LLM agent that can use all of it. Ships as a CLI, a JSON API, and a Next.js/shadcn dashboard.
 
+## Plan (`/mealprep`, `sains plan`)
+
+A **dish bank** (`data/dishes.json`: ~30 batch-cook dishes across cuisines, each with ingredient grams, method and per-100 g macros) is priced against today's range: every ingredient has a search keyword plus must/avoid name tokens and a form (raw ingredient / frozen), the matcher picks the **cheapest product per gram** that fits (offers break ties), and each dish gets **£/portion, kcal/protein/carbs/fat per portion, protein-per-£ and offers coverage**. Sort by £/portion, protein per £ or offers; filter by cuisine; set **macro goals per portion** (bars turn amber >110 %).
+
+Add dishes with **+** (batches of the dish's portions) → the plan panel shows total portions, total £ (proportional, and "whole packs ≈"), macros vs goals, and a **merged shopping list** (same product across dishes collapsed, packs rounded up) with product links and a **Copy** button. *Ask the agent to refine this plan* hands the selection + goals to `/ask`. Selection and goals persist in `localStorage`.
+
+Deterministic and explainable by design (no LLM needed to match); the agent has a `rank_dishes` tool for the fuzzy/creative layer. Import your own dishes: `sains dishes import my.json` (same schema — ingredients need `kw`, `must`, `avoid`, `per100`). Macros are estimates from standard raw-ingredient values; Sainsbury's product JSON carries no nutrition.
+
+**Express checkout**: not automated (that's ordering on your account). Planned: a bookmarklet that adds the shopping list to your Sainsbury's basket inside *your* logged-in browser — needs the real add-to-basket request captured from a live session first.
+
 ## Agent (`sains ask`, `/ask`)
 
 [pydantic-ai](https://ai.pydantic.dev) agent with tools over the scraper: `search_products`, `best_offers`, `meal_prep_plan`, `store_details`, `find_stores`. Instructions carry the chosen store, today's hours and the scraping etiquette (≤ 6 tool calls). The **provider is one env var** — pydantic-ai's model string is the universal adapter:

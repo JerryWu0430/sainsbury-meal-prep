@@ -23,7 +23,7 @@ export function Thumb({ src, size = 40 }: { src: string; size?: number }) {
 function Deal({ i }: { i: Item }) {
   return (
     <span className="inline-flex flex-wrap items-center gap-1">
-      {i.pct > 0 && <Badge className="bg-emerald-600 text-white dark:bg-emerald-500">-{i.pct}%</Badge>}
+      {i.pct > 0 && <Badge className="bg-emerald-700 text-white">-{i.pct}%</Badge>}
       {i.nectar && <Badge variant="secondary" className="bg-violet-500/10 text-violet-700 dark:text-violet-300">Nectar</Badge>}
       {i.promo && <span className="text-muted-foreground text-xs">{i.promo}</span>}
     </span>
@@ -35,8 +35,8 @@ export function StarButton({ item }: { item: Item }) {
   const on = has(item.uid);
   return (
     <button type="button" aria-pressed={on} aria-label={on ? "Remove from favourites" : "Add to favourites"} onClick={() => toggle(item)}
-      className="text-muted-foreground hover:text-foreground -m-1 grid size-8 shrink-0 place-items-center rounded-md transition-[color,scale] duration-150 ease-[cubic-bezier(0.2,0,0,1)] active:scale-[0.96] motion-reduce:active:scale-100">
-      <Star strokeWidth={1.75} className={`size-4 transition-[fill,color] duration-150 ${on ? "fill-amber-400 text-amber-500" : "fill-transparent"}`} />
+      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 relative -m-1 grid size-8 shrink-0 place-items-center rounded-md transition-[color,scale] duration-150 ease-[cubic-bezier(0.2,0,0,1)] outline-none focus-visible:ring-3 active:scale-[0.96] motion-reduce:active:scale-100 before:absolute before:top-1/2 before:left-1/2 before:size-11 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']">
+      <Star strokeWidth={1.75} className={`size-4 transition-[fill,color] duration-150 ${on ? "fill-amber-400 text-amber-600 dark:text-amber-400" : "fill-transparent"}`} />
     </button>
   );
 }
@@ -82,7 +82,7 @@ export function ItemsTable({ items, loading, error, groupBy }: { items?: Item[];
               {i.was && <div className="text-muted-foreground text-xs line-through">{gbp(i.was)}</div>}
             </TableCell>
             <TableCell className="hidden whitespace-normal sm:table-cell"><Deal i={i} /></TableCell>
-            <TableCell className="text-muted-foreground hidden text-xs tabular-nums md:table-cell">{i.ends === today() ? <span className="text-amber-600 dark:text-amber-400">today</span> : i.ends.slice(5)}</TableCell>
+            <TableCell className="text-muted-foreground hidden text-xs tabular-nums md:table-cell">{i.ends === today() ? <span className="text-amber-700 dark:text-amber-400">today</span> : i.ends.slice(5)}</TableCell>
           </TableRow>
           </Fragment>
         ))}

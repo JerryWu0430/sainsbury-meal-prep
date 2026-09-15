@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { TextSwap } from "@/lib/transitions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ItemsTable } from "@/components/items-table";
@@ -27,10 +28,10 @@ const unitVal = (u: string) => {
 
 function Seg<T extends string>({ value, onChange, options, label }: { value: T; onChange: (v: T) => void; options: [T, string][]; label: string }) {
   return (
-    <div role="group" aria-label={label} className="bg-muted flex rounded-lg p-0.5">
+    <div role="radiogroup" aria-label={label} className="bg-muted flex rounded-lg p-0.5">
       {options.map(([v, l]) => (
-        <button key={v} type="button" aria-pressed={value === v} onClick={() => onChange(v)}
-          className={`rounded-md px-2 py-1 text-xs transition-[color,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] ${value === v ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+        <button key={v} type="button" role="radio" aria-checked={value === v} onClick={() => onChange(v)}
+          className={`focus-visible:ring-ring/50 relative rounded-md px-2.5 py-1.5 text-xs transition-[color,background-color,box-shadow] duration-150 ease-[cubic-bezier(0.2,0,0,1)] outline-none focus-visible:ring-3 before:absolute before:inset-x-0 before:top-1/2 before:h-11 before:-translate-y-1/2 before:content-[''] ${value === v ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
           {l}
         </button>
       ))}
@@ -117,6 +118,12 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
   }, [visible.length, shown, key]);
 
   const loading = kws.length > 0 && progress.done < progress.total;
+  const showBar = items.length > 0 || loading;
+  const [barOpen, setBarOpen] = useState(false);
+  useEffect(() => { // mount closed, open on the next frame so the reveal has a starting state
+    const r = requestAnimationFrame(() => setBarOpen(showBar));
+    return () => cancelAnimationFrame(r);
+  }, [showBar]);
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const typed = draft.split(",").map((s) => s.trim()).filter(Boolean);
@@ -126,7 +133,7 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
   return (
     <div className="space-y-4">
       <form className="flex flex-wrap gap-2" onSubmit={submit}>
-        <Input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={placeholder} className="basis-full sm:basis-auto sm:flex-1" />
+        <Input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={placeholder} aria-label={placeholder} className="basis-full sm:basis-auto sm:flex-1" />
         {hasMin && (
           <label className="text-muted-foreground flex items-center gap-1.5 text-xs">
             min
@@ -137,24 +144,24 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
         {path === "search" && (
           <Button type="button" variant={offersOnly ? "default" : "outline"} aria-pressed={offersOnly} onClick={() => setOffersOnly(!offersOnly)}>Offers only</Button>
         )}
-        <Button type="submit" className="ml-auto sm:ml-0">Go</Button>
+        <Button type="submit" disabled={loading} className="ml-auto sm:ml-0">{loading ? "…" : "Go"}</Button>
       </form>
 
-      {(items.length > 0 || loading) && (
-        <div className="flex flex-wrap items-center gap-2">
+      {showBar && (
+        <div className="t-panel-slide flex flex-wrap items-center gap-2" data-open={barOpen} style={{ "--panel-translate-y": "12px" } as React.CSSProperties}>
           <Seg label="Nectar" value={nectar} onChange={setNectar} options={NECTAR} />
           <Seg label="Sort" value={sort} onChange={setSort} options={SORTS} />
           <Seg label="Form" value={formFilter} onChange={setFormFilter} options={FORMS} />
-          <span className="text-muted-foreground ml-auto text-xs tabular-nums">
-            {loading ? `Loading ${progress.current}… ${progress.done}/${progress.total}` : `${visible.length} items`}
+          <span role="status" aria-live="polite" className="text-muted-foreground ml-auto text-xs tabular-nums">
+            <TextSwap>{loading ? `Loading ${progress.current}… ${progress.done}/${progress.total}` : `${visible.length} items`}</TextSwap>
           </span>
         </div>
       )}
       {categories.length > 1 && (
-        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Category">
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Category">
           {[["", `All (${items.length})`] as [string, string], ...categories.map(([c, n]) => [c, `${c} (${n})`] as [string, string])].map(([c, l]) => (
-            <button key={c} type="button" aria-pressed={catFilter === c} onClick={() => setCatFilter(c)}
-              className={`rounded-full border px-2.5 py-0.5 text-xs transition-[color,background-color,border-color] duration-150 ease-[cubic-bezier(0.2,0,0,1)] ${catFilter === c ? "bg-foreground text-background border-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+            <button key={c} type="button" role="radio" aria-checked={catFilter === c} onClick={() => setCatFilter(c)}
+              className={`focus-visible:ring-ring/50 min-h-7 rounded-full border px-3 py-1 text-xs transition-[color,background-color,border-color] duration-150 ease-[cubic-bezier(0.2,0,0,1)] outline-none focus-visible:ring-3 ${catFilter === c ? "bg-foreground text-background border-foreground" : "text-muted-foreground hover:text-foreground"}`}>
               {l}
             </button>
           ))}

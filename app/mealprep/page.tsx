@@ -1,6 +1,6 @@
-import { MealPrep } from "@/components/mealprep";
+import { Plan } from "@/components/plan";
 
-export const metadata = { title: "Meal prep" };
-export default function MealPrepPage() {
-  return <MealPrep />;
+export const metadata = { title: "Plan" };
+export default function PlanPage() {
+  return <Plan />;
 }

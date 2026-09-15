@@ -3,10 +3,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader,
-  SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarRail,
+  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail,
 } from "@/components/ui/sidebar";
 import { useFavourites } from "@/lib/favourites";
 import { NAV } from "@/lib/nav";
+import { Digits } from "@/lib/transitions";
 import { StoreStatus } from "./store-status";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -31,7 +32,15 @@ export function AppSidebar() {
                   <Icon strokeWidth={1.75} />
                   <span>{title}</span>
                 </SidebarMenuButton>
-                {href === "/favourites" && favs.length > 0 && <SidebarMenuBadge className="tabular-nums">{favs.length}</SidebarMenuBadge>}
+                {href === "/favourites" && (
+                  // stays mounted so the badge can animate both ways; the count itself pops per change
+                  <span className="t-badge group-data-[collapsible=icon]:hidden" data-open={favs.length > 0}>
+                    <span className="t-badge-dot text-sidebar-foreground flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium tabular-nums select-none">
+                      <Digits value={favs.length || ""} />
+                    </span>
+                    <span className="sr-only">{favs.length} saved</span>
+                  </span>
+                )}
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

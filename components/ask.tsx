@@ -1,4 +1,5 @@
 "use client";
+import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import Markdown from "react-markdown";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,8 @@ type Turn = { q: string; a: string; error?: string };
 export function Ask() {
   const { code } = useStore();
   const { favs } = useFavourites();
-  const [draft, setDraft] = useState("");
+  const params = useSearchParams();
+  const [draft, setDraft] = useState(params.get("q") ?? "");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
   const bottom = useRef<HTMLDivElement>(null);
@@ -54,20 +56,20 @@ export function Ask() {
       <div className="space-y-6">
         {turns.map((t, i) => (
           <div key={i} className="space-y-3">
-            <p className="font-serif text-xl leading-snug">{t.q}</p>
+            <h2 className="font-serif text-xl leading-snug font-normal">{t.q}</h2>
             {t.error ? (
-              <p className="text-destructive text-sm">{t.error}{t.error.startsWith("503") && " — add ANTHROPIC_API_KEY / GEMINI_API_KEY and SAINS_MODEL to the environment."}</p>
+              <p role="alert" className="text-destructive text-sm">{t.error}{t.error.startsWith("503") && " — add ANTHROPIC_API_KEY / GEMINI_API_KEY and SAINS_MODEL to the environment."}</p>
             ) : t.a ? (
               <div className="md text-sm leading-relaxed"><Markdown>{t.a}</Markdown></div>
             ) : (
-              <p className="text-muted-foreground text-sm">Checking offers… tool calls scrape live, this can take 10–40 s.</p>
+              <p role="status" aria-live="polite" className="text-muted-foreground text-sm">Checking offers… tool calls scrape live, this can take 10–40 s.</p>
             )}
           </div>
         ))}
         <div ref={bottom} />
       </div>
       <form className="bg-background sticky bottom-0 flex gap-2 py-3" onSubmit={(e) => { e.preventDefault(); send(draft); }}>
-        <Textarea value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Ask about offers, new items, meal prep…" rows={2} className="min-h-0 resize-none"
+        <Textarea value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Ask about offers, new items, meal prep…" aria-label="Ask about offers, new items, meal prep" rows={2} className="min-h-0 resize-none"
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(draft); } }} />
         <Button type="submit" disabled={busy || !draft.trim()} className="self-end">{busy ? "…" : "Ask"}</Button>
       </form>
