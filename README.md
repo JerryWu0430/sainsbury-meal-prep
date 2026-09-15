@@ -70,6 +70,10 @@ Measured on prod (Playwright, desktop, 2026-09-15): time to **first product row*
 | function `/tmp` | curl_cffi responses per instance (best-effort) | 6 h |
 | cron | `/api/warm` 06:00 UTC re-fetches the default URLs through the public host so the CDN is warm before you wake up (`CRON_SECRET` gates it if set) | daily |
 
+Rows also carry a **form**: `ingredient` (raw cuts, produce, staples, block cheese, sausages) · `ready` (breaded, cooked, pots, meals, snacks) · `frozen` — a filter next to category so breaded chicken never sits next to raw drumsticks; meal-prep ideas only use ingredients (frozen veg allowed).
+
+**Favourites**: ☆ any row → saved in `localStorage` (this browser), badge in the sidebar, `/favourites` shows them and *Refresh prices* hits `GET /api/items?uids=…` (one request, ≤30 uids) to compare with the saved price. The Ask agent receives your favourite names as context.
+
 Rows carry **department / aisle** (`sains/categories.py` rolls Sainsbury's leaf categories up with keyword rules; the response's `cat_filters` tree is a hint) → category chips + a grouped *Category* sort.
 
 Client fetches **one keyword at a time, two in flight** — rows stream in as each lands, cold loads never put more than 2 scrapes on Sainsbury's, and each URL becomes a reusable cache entry. Lists render 20 rows and infinite-scroll the rest.

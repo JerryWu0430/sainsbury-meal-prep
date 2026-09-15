@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import Markdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useFavourites } from "@/lib/favourites";
 import { useStore } from "@/lib/store-context";
 
 const SUGGESTIONS = ["Best protein deals this week?", "Plan 4 lunches under £12 from today's offers", "Anything new worth trying?", "Cheapest way to do a veggie curry?"];
@@ -10,6 +11,7 @@ type Turn = { q: string; a: string; error?: string };
 
 export function Ask() {
   const { code } = useStore();
+  const { favs } = useFavourites();
   const [draft, setDraft] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
@@ -21,7 +23,7 @@ export function Ask() {
     setTurns((t) => [...t, { q, a: "" }]);
     const patch = (f: (t: Turn) => Turn) => setTurns((ts) => ts.map((t, i) => (i === ts.length - 1 ? f(t) : t)));
     try {
-      const res = await fetch("/api/ask", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ question: q, store: code }) });
+      const res = await fetch("/api/ask", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ question: q, store: code, favourites: favs.slice(0, 20).map((f) => f.name) }) });
       if (!res.ok || !res.body) {
         const detail = await res.json().then((j) => j.detail).catch(() => res.statusText);
         patch((t) => ({ ...t, error: `${res.status}: ${detail}` }));

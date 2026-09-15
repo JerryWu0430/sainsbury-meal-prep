@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export type Item = {
   uid: string; name: string; price: number | null; was: number | null; pct: number; unit: string;
   promo: string; nectar: boolean; ends: string; life: string; available: boolean; url: string;
-  image: string; thumb: string; category?: string; subcategory?: string;
+  image: string; thumb: string; category?: string; subcategory?: string; form?: "ingredient" | "ready" | "frozen";
 };
 export type Idea = { idea: string; items: Item[]; cost: number; per_portion: number };
 export type Plan = { picks: Record<string, Item[]>; ideas: Idea[] };

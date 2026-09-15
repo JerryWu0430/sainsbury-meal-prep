@@ -9,6 +9,7 @@ import { NEW_KWS, STAPLES } from "@/lib/keywords";
 type Path = "offers" | "new" | "search";
 type Nectar = "all" | "nectar" | "none";
 type Sort = "pct" | "price" | "unit" | "category" | "order";
+type Form = "all" | "ingredient" | "ready" | "frozen";
 type Props = { path: Path; placeholder: string; hasMin?: boolean; required?: boolean };
 
 const PAGE = 20;
@@ -16,6 +17,7 @@ const DEFAULTS: Record<Path, string[]> = { offers: STAPLES, new: NEW_KWS, search
 const NECTAR: [Nectar, string][] = [["all", "All deals"], ["nectar", "Nectar"], ["none", "No card"]];
 const SORTS: [Sort, string][] = [["pct", "% off"], ["price", "Price"], ["unit", "£/unit"], ["category", "Category"], ["order", "Relevance"]];
 const cat = (i: Item) => i.category || "Other";
+const FORMS: [Form, string][] = [["all", "Everything"], ["ingredient", "Ingredients"], ["ready", "Ready-made"], ["frozen", "Frozen"]];
 
 // "£12.5/kg" -> 12.5 ; "£1.2/100g" -> 12 ; per-each isn't comparable -> last
 const unitVal = (u: string) => {
@@ -44,6 +46,7 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
   const [sort, setSort] = useState<Sort>(path === "offers" ? "pct" : "order");
   const [offersOnly, setOffersOnly] = useState(false);
   const [catFilter, setCatFilter] = useState("");
+  const [formFilter, setFormFilter] = useState<Form>("all");
   const offers = path === "offers" || (path === "search" && offersOnly);
   const isNew = path === "new";
   // everything fetched is keyed by the request, so a new request shows fresh state without resetting in an effect
@@ -93,14 +96,15 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
   }, [items]);
 
   const visible = useMemo(() => {
-    const v = items.filter((i) => i.pct >= min && (nectar === "all" || (nectar === "nectar") === i.nectar) && (!catFilter || cat(i) === catFilter));
+    const v = items.filter((i) => i.pct >= min && (nectar === "all" || (nectar === "nectar") === i.nectar) && (!catFilter || cat(i) === catFilter)
+      && (formFilter === "all" || (i.form ?? "ingredient") === formFilter));
     const byDeal = (a: Item, b: Item) => b.pct - a.pct || (a.price ?? 0) - (b.price ?? 0);
     if (sort === "pct") v.sort(byDeal);
     else if (sort === "price") v.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     else if (sort === "unit") v.sort((a, b) => unitVal(a.unit) - unitVal(b.unit));
     else if (sort === "category") v.sort((a, b) => cat(a).localeCompare(cat(b)) || (a.subcategory ?? "").localeCompare(b.subcategory ?? "") || byDeal(a, b));
     return v;
-  }, [items, min, nectar, sort, catFilter]);
+  }, [items, min, nectar, sort, catFilter, formFilter]);
 
   useEffect(() => { // infinite scroll: reveal the next page when the sentinel nears the viewport
     const el = sentinel.current;
@@ -140,6 +144,7 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
         <div className="flex flex-wrap items-center gap-2">
           <Seg label="Nectar" value={nectar} onChange={setNectar} options={NECTAR} />
           <Seg label="Sort" value={sort} onChange={setSort} options={SORTS} />
+          <Seg label="Form" value={formFilter} onChange={setFormFilter} options={FORMS} />
           <span className="text-muted-foreground ml-auto text-xs tabular-nums">
             {loading ? `Loading ${progress.current}… ${progress.done}/${progress.total}` : `${visible.length} items`}
           </span>

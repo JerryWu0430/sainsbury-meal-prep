@@ -3,14 +3,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader,
-  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail,
+  SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarRail,
 } from "@/components/ui/sidebar";
+import { useFavourites } from "@/lib/favourites";
 import { NAV } from "@/lib/nav";
 import { StoreStatus } from "./store-status";
 import { ThemeToggle } from "./theme-toggle";
 
 export function AppSidebar() {
   const path = usePathname();
+  const { favs } = useFavourites();
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="flex-row items-center justify-between px-3 pt-3">
@@ -29,6 +31,7 @@ export function AppSidebar() {
                   <Icon strokeWidth={1.75} />
                   <span>{title}</span>
                 </SidebarMenuButton>
+                {href === "/favourites" && favs.length > 0 && <SidebarMenuBadge className="tabular-nums">{favs.length}</SidebarMenuBadge>}
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

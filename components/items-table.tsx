@@ -1,9 +1,11 @@
 "use client";
+import { Star } from "lucide-react";
 import { Fragment } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Item } from "@/lib/api";
+import { useFavourites } from "@/lib/favourites";
 
 const gbp = (n: number | null) => (n == null ? "" : `£${n.toFixed(2)}`);
 const today = () => new Date().toISOString().slice(0, 10);
@@ -27,6 +29,19 @@ function Deal({ i }: { i: Item }) {
     </span>
   );
 }
+
+export function StarButton({ item }: { item: Item }) {
+  const { has, toggle } = useFavourites();
+  const on = has(item.uid);
+  return (
+    <button type="button" aria-pressed={on} aria-label={on ? "Remove from favourites" : "Add to favourites"} onClick={() => toggle(item)}
+      className="text-muted-foreground hover:text-foreground -m-1 grid size-8 shrink-0 place-items-center rounded-md transition-[color,scale] duration-150 ease-[cubic-bezier(0.2,0,0,1)] active:scale-[0.96] motion-reduce:active:scale-100">
+      <Star strokeWidth={1.75} className={`size-4 transition-[fill,color] duration-150 ${on ? "fill-amber-400 text-amber-500" : "fill-transparent"}`} />
+    </button>
+  );
+}
+
+const FORM: Record<string, string> = { ready: "ready-made", frozen: "frozen" };
 
 export function ItemsTable({ items, loading, error, groupBy }: { items?: Item[]; loading: boolean; error?: string; groupBy?: (i: Item) => string }) {
   if (error) return <p className="text-destructive text-sm">{error}</p>;
@@ -53,10 +68,11 @@ export function ItemsTable({ items, loading, error, groupBy }: { items?: Item[];
           <TableRow>
             <TableCell className="whitespace-normal">
               <div className="flex items-center gap-3">
+                <StarButton item={i} />
                 <Thumb src={i.thumb} />
                 <div className="min-w-0">
                   <a href={i.url} target="_blank" rel="noreferrer" className="hover:underline">{i.name}</a>
-                  <div className="text-muted-foreground text-xs">{i.unit}{i.life && ` · ${i.life}`}{i.subcategory && ` · ${i.subcategory}`}</div>
+                  <div className="text-muted-foreground text-xs">{i.unit}{i.life && ` · ${i.life}`}{i.subcategory && ` · ${i.subcategory}`}{i.form && FORM[i.form] && <span className="ml-1 rounded bg-muted px-1 py-px text-[10px] uppercase tracking-wide">{FORM[i.form]}</span>}</div>
                   <div className="mt-1 sm:hidden"><Deal i={i} /></div>
                 </div>
               </div>
