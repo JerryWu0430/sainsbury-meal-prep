@@ -43,7 +43,7 @@ def _multi(kws: list[str], **opts) -> list[dict]:
 def get_health():
     """Ops: is the shared layer live, is the breaker tripped, which region."""
     from sains import shared
-    return {"redis": bool(shared._safe(lambda r: r.ping())), "blocked_for_s": shared.blocked_for(),
+    return {"shared": shared.backend_name(), "shared_ok": shared.ping(), "blocked_for_s": shared.blocked_for(),
             "region": os.environ.get("VERCEL_REGION"), "model": MODEL, "cdn_host": products.CDN_HOST}
 
 
