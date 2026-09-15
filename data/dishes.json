@@ -1,0 +1,2254 @@
+{
+ "version": 1,
+ "note": "Meal-prep dish bank. Ingredient macros are approximate per 100 g as bought (raw/dry). Quantities are for `portions`. Import your own with `sains dishes import file.json` (same schema).",
+ "ingredients": {
+  "chicken breast": {
+   "kw": "chicken breast",
+   "role": "protein",
+   "must": [
+    "breast"
+   ],
+   "avoid": [
+    "breaded",
+    "cooked",
+    "kyiv",
+    "roast",
+    "stuffed",
+    "dusted",
+    "buttermilk"
+   ],
+   "per100": [
+    165,
+    31,
+    0,
+    3.6
+   ]
+  },
+  "chicken thigh": {
+   "kw": "chicken thighs",
+   "role": "protein",
+   "must": [
+    "thigh"
+   ],
+   "avoid": [
+    "cooked",
+    "roast",
+    "marinated"
+   ],
+   "per100": [
+    177,
+    24,
+    0,
+    8
+   ]
+  },
+  "salmon": {
+   "kw": "salmon fillet",
+   "role": "protein",
+   "must": [
+    "salmon"
+   ],
+   "avoid": [
+    "smoked",
+    "cat",
+    "dog",
+    "en croute",
+    "plant",
+    "vegan",
+    "vivera",
+    "ready"
+   ],
+   "per100": [
+    208,
+    20,
+    0,
+    13
+   ]
+  },
+  "beef mince": {
+   "kw": "beef mince",
+   "role": "protein",
+   "must": [
+    "mince"
+   ],
+   "avoid": [
+    "pie",
+    "pies"
+   ],
+   "per100": [
+    137,
+    21,
+    0,
+    5
+   ]
+  },
+  "turkey mince": {
+   "kw": "turkey mince",
+   "role": "protein",
+   "must": [
+    "turkey",
+    "mince"
+   ],
+   "avoid": [],
+   "per100": [
+    150,
+    20,
+    0,
+    8
+   ]
+  },
+  "pork loin": {
+   "kw": "pork loin",
+   "role": "protein",
+   "must": [
+    "pork"
+   ],
+   "avoid": [
+    "sausage",
+    "bacon",
+    "belly",
+    "pie"
+   ],
+   "per100": [
+    143,
+    21,
+    0,
+    6
+   ]
+  },
+  "prawns": {
+   "kw": "raw prawns",
+   "role": "protein",
+   "must": [
+    "prawn"
+   ],
+   "avoid": [
+    "cocktail",
+    "sandwich"
+   ],
+   "per100": [
+    85,
+    20,
+    0,
+    1
+   ]
+  },
+  "tofu": {
+   "kw": "tofu",
+   "role": "protein",
+   "must": [
+    "tofu"
+   ],
+   "avoid": [],
+   "per100": [
+    76,
+    8,
+    2,
+    4.8
+   ]
+  },
+  "eggs": {
+   "kw": "eggs",
+   "role": "protein",
+   "must": [
+    "egg"
+   ],
+   "avoid": [
+    "chocolate",
+    "scotch",
+    "noodle"
+   ],
+   "per100": [
+    143,
+    13,
+    1,
+    10
+   ]
+  },
+  "chickpeas": {
+   "kw": "chickpeas",
+   "role": "protein",
+   "must": [
+    "chickpea"
+   ],
+   "avoid": [
+    "hummus",
+    "houmous",
+    "crisps"
+   ],
+   "per100": [
+    139,
+    7,
+    22,
+    2.6
+   ]
+  },
+  "lentils": {
+   "kw": "lentils",
+   "role": "protein",
+   "must": [
+    "lentil"
+   ],
+   "avoid": [
+    "crisps",
+    "soup"
+   ],
+   "per100": [
+    116,
+    9,
+    20,
+    0.4
+   ]
+  },
+  "black beans": {
+   "kw": "black beans",
+   "role": "protein",
+   "must": [
+    "black",
+    "bean"
+   ],
+   "avoid": [],
+   "per100": [
+    91,
+    6,
+    16,
+    0.3
+   ]
+  },
+  "tuna": {
+   "kw": "tinned tuna",
+   "role": "protein",
+   "must": [
+    "tuna"
+   ],
+   "avoid": [
+    "cat",
+    "steak",
+    "sandwich"
+   ],
+   "per100": [
+    116,
+    26,
+    0,
+    1
+   ]
+  },
+  "halloumi": {
+   "kw": "halloumi",
+   "role": "protein",
+   "must": [
+    "halloumi"
+   ],
+   "avoid": [
+    "fries",
+    "bites"
+   ],
+   "per100": [
+    321,
+    22,
+    2,
+    25
+   ]
+  },
+  "paneer": {
+   "kw": "paneer",
+   "role": "protein",
+   "must": [
+    "paneer"
+   ],
+   "avoid": [],
+   "per100": [
+    296,
+    18,
+    4,
+    22
+   ]
+  },
+  "feta": {
+   "kw": "feta",
+   "role": "other",
+   "must": [
+    "feta"
+   ],
+   "avoid": [],
+   "per100": [
+    264,
+    14,
+    4,
+    21
+   ]
+  },
+  "cheddar": {
+   "kw": "cheddar",
+   "role": "other",
+   "must": [
+    "cheddar"
+   ],
+   "avoid": [
+    "slices",
+    "sliced",
+    "snack",
+    "grated"
+   ],
+   "per100": [
+    410,
+    25,
+    0,
+    34
+   ]
+  },
+  "yogurt": {
+   "kw": "natural yogurt",
+   "role": "other",
+   "must": [
+    "yog"
+   ],
+   "avoid": [
+    "strawberry",
+    "vanilla",
+    "drink"
+   ],
+   "per100": [
+    61,
+    3.5,
+    4.7,
+    3.3
+   ]
+  },
+  "basmati rice": {
+   "kw": "basmati rice",
+   "role": "carb",
+   "must": [
+    "rice"
+   ],
+   "avoid": [
+    "microwave",
+    "pouch",
+    "pudding"
+   ],
+   "per100": [
+    350,
+    8,
+    78,
+    0.6
+   ]
+  },
+  "pasta": {
+   "kw": "dried pasta",
+   "role": "carb",
+   "must": [
+    "pasta",
+    "penne",
+    "fusilli",
+    "rigatoni",
+    "spaghetti"
+   ],
+   "any": true,
+   "avoid": [
+    "fresh",
+    "sauce",
+    "pot",
+    "filled",
+    "bake"
+   ],
+   "per100": [
+    350,
+    12,
+    71,
+    1.5
+   ]
+  },
+  "egg noodles": {
+   "kw": "egg noodles",
+   "role": "carb",
+   "must": [
+    "noodle"
+   ],
+   "avoid": [
+    "pot",
+    "instant",
+    "straight to wok"
+   ],
+   "per100": [
+    350,
+    11,
+    70,
+    2
+   ]
+  },
+  "rice noodles": {
+   "kw": "rice noodles",
+   "role": "carb",
+   "must": [
+    "rice",
+    "noodle"
+   ],
+   "avoid": [
+    "pot",
+    "instant"
+   ],
+   "per100": [
+    360,
+    6,
+    83,
+    0.6
+   ]
+  },
+  "potatoes": {
+   "kw": "potatoes",
+   "role": "carb",
+   "must": [
+    "potato"
+   ],
+   "avoid": [
+    "sweet",
+    "crisps",
+    "mash",
+    "roast",
+    "wedges",
+    "chips"
+   ],
+   "per100": [
+    77,
+    2,
+    17,
+    0.1
+   ]
+  },
+  "sweet potato": {
+   "kw": "sweet potato",
+   "role": "carb",
+   "must": [
+    "sweet",
+    "potato"
+   ],
+   "avoid": [
+    "fries",
+    "wedges",
+    "mash"
+   ],
+   "per100": [
+    86,
+    1.6,
+    20,
+    0.1
+   ]
+  },
+  "tortilla wraps": {
+   "kw": "tortilla wraps",
+   "role": "carb",
+   "must": [
+    "tortilla",
+    "wrap"
+   ],
+   "any": true,
+   "avoid": [
+    "chips",
+    "filled",
+    "chicken",
+    "cheese",
+    "salad"
+   ],
+   "per100": [
+    300,
+    8,
+    50,
+    7
+   ]
+  },
+  "couscous": {
+   "kw": "couscous",
+   "role": "carb",
+   "must": [
+    "couscous"
+   ],
+   "avoid": [
+    "pot",
+    "salad"
+   ],
+   "per100": [
+    376,
+    13,
+    77,
+    0.6
+   ]
+  },
+  "pitta": {
+   "kw": "pitta bread",
+   "role": "carb",
+   "must": [
+    "pitta"
+   ],
+   "avoid": [
+    "chips",
+    "crisps"
+   ],
+   "per100": [
+    275,
+    9,
+    55,
+    1
+   ]
+  },
+  "broccoli": {
+   "kw": "broccoli",
+   "role": "veg",
+   "must": [
+    "broccoli"
+   ],
+   "avoid": [
+    "soup",
+    "cheese"
+   ],
+   "per100": [
+    34,
+    2.8,
+    7,
+    0.4
+   ]
+  },
+  "spinach": {
+   "kw": "spinach",
+   "role": "veg",
+   "must": [
+    "spinach"
+   ],
+   "avoid": [
+    "ricotta",
+    "pasta"
+   ],
+   "per100": [
+    23,
+    2.9,
+    3.6,
+    0.4
+   ]
+  },
+  "peppers": {
+   "kw": "peppers",
+   "role": "veg",
+   "must": [
+    "pepper"
+   ],
+   "avoid": [
+    "black pepper",
+    "stuffed",
+    "roasted",
+    "jar"
+   ],
+   "per100": [
+    26,
+    1,
+    6,
+    0.3
+   ]
+  },
+  "onions": {
+   "kw": "onions",
+   "role": "veg",
+   "must": [
+    "onion"
+   ],
+   "avoid": [
+    "rings",
+    "crispy",
+    "spring",
+    "pickled",
+    "chutney",
+    "organic"
+   ],
+   "per100": [
+    40,
+    1.1,
+    9,
+    0.1
+   ]
+  },
+  "tomatoes": {
+   "kw": "tomatoes",
+   "role": "veg",
+   "must": [
+    "tomato"
+   ],
+   "avoid": [
+    "chopped",
+    "tinned",
+    "passata",
+    "soup",
+    "ketchup",
+    "puree"
+   ],
+   "per100": [
+    18,
+    0.9,
+    3.9,
+    0.2
+   ]
+  },
+  "courgette": {
+   "kw": "courgette",
+   "role": "veg",
+   "must": [
+    "courgette"
+   ],
+   "avoid": [],
+   "per100": [
+    17,
+    1.2,
+    3,
+    0.3
+   ]
+  },
+  "mushrooms": {
+   "kw": "mushrooms",
+   "role": "veg",
+   "must": [
+    "mushroom"
+   ],
+   "avoid": [
+    "soup",
+    "stuffed",
+    "garlic"
+   ],
+   "per100": [
+    22,
+    3,
+    3,
+    0.3
+   ]
+  },
+  "carrots": {
+   "kw": "carrots",
+   "role": "veg",
+   "must": [
+    "carrot"
+   ],
+   "avoid": [
+    "cake",
+    "batons",
+    "juice"
+   ],
+   "per100": [
+    41,
+    0.9,
+    10,
+    0.2
+   ]
+  },
+  "frozen veg": {
+   "kw": "frozen vegetables",
+   "role": "veg",
+   "must": [
+    "veg"
+   ],
+   "avoid": [
+    "roast",
+    "battered"
+   ],
+   "form": "frozen",
+   "per100": [
+    65,
+    3,
+    12,
+    0.5
+   ]
+  },
+  "peas": {
+   "kw": "frozen peas",
+   "role": "veg",
+   "must": [
+    "pea"
+   ],
+   "avoid": [
+    "chick",
+    "mushy",
+    "snap",
+    "pod"
+   ],
+   "form": "frozen",
+   "per100": [
+    81,
+    5,
+    14,
+    0.4
+   ]
+  },
+  "sweetcorn": {
+   "kw": "sweetcorn",
+   "role": "veg",
+   "must": [
+    "sweetcorn"
+   ],
+   "avoid": [
+    "cob"
+   ],
+   "per100": [
+    86,
+    3,
+    19,
+    1.2
+   ]
+  },
+  "cabbage": {
+   "kw": "cabbage",
+   "role": "veg",
+   "must": [
+    "cabbage"
+   ],
+   "avoid": [
+    "red",
+    "pickled"
+   ],
+   "per100": [
+    25,
+    1.3,
+    6,
+    0.1
+   ]
+  },
+  "aubergine": {
+   "kw": "aubergine",
+   "role": "veg",
+   "must": [
+    "aubergine"
+   ],
+   "avoid": [],
+   "per100": [
+    25,
+    1,
+    6,
+    0.2
+   ]
+  },
+  "green beans": {
+   "kw": "green beans",
+   "role": "veg",
+   "must": [
+    "bean"
+   ],
+   "avoid": [
+    "baked",
+    "black",
+    "kidney",
+    "tin"
+   ],
+   "per100": [
+    31,
+    1.8,
+    7,
+    0.1
+   ]
+  },
+  "cauliflower": {
+   "kw": "cauliflower",
+   "role": "veg",
+   "must": [
+    "cauliflower"
+   ],
+   "avoid": [
+    "cheese",
+    "rice"
+   ],
+   "per100": [
+    25,
+    1.9,
+    5,
+    0.3
+   ]
+  },
+  "kale": {
+   "kw": "kale",
+   "role": "veg",
+   "must": [
+    "kale"
+   ],
+   "avoid": [
+    "crisps"
+   ],
+   "per100": [
+    49,
+    4.3,
+    9,
+    0.9
+   ]
+  },
+  "coconut milk": {
+   "kw": "coconut milk",
+   "role": "sauce",
+   "must": [
+    "coconut"
+   ],
+   "avoid": [
+    "drink",
+    "yog",
+    "water"
+   ],
+   "per100": [
+    197,
+    2,
+    3,
+    21
+   ]
+  },
+  "curry paste": {
+   "kw": "curry paste",
+   "role": "sauce",
+   "must": [
+    "paste"
+   ],
+   "avoid": [],
+   "per100": [
+    150,
+    3,
+    12,
+    9
+   ]
+  },
+  "chopped tomatoes": {
+   "kw": "chopped tomatoes",
+   "role": "sauce",
+   "must": [
+    "tomato"
+   ],
+   "avoid": [
+    "fresh",
+    "cherry",
+    "soup"
+   ],
+   "per100": [
+    25,
+    1,
+    4,
+    0.2
+   ]
+  },
+  "passata": {
+   "kw": "passata",
+   "role": "sauce",
+   "must": [
+    "passata"
+   ],
+   "avoid": [],
+   "per100": [
+    30,
+    1.3,
+    6,
+    0.2
+   ]
+  },
+  "soy sauce": {
+   "kw": "soy sauce",
+   "role": "sauce",
+   "must": [
+    "soy"
+   ],
+   "avoid": [
+    "milk",
+    "drink"
+   ],
+   "per100": [
+    53,
+    8,
+    5,
+    0
+   ]
+  },
+  "pesto": {
+   "kw": "pesto",
+   "role": "sauce",
+   "must": [
+    "pesto"
+   ],
+   "avoid": [
+    "pot",
+    "pasta pot"
+   ],
+   "per100": [
+    450,
+    5,
+    6,
+    45
+   ]
+  },
+  "teriyaki sauce": {
+   "kw": "teriyaki sauce",
+   "role": "sauce",
+   "must": [
+    "teriyaki"
+   ],
+   "avoid": [
+    "noodle",
+    "chicken"
+   ],
+   "per100": [
+    89,
+    6,
+    16,
+    0
+   ]
+  },
+  "gochujang": {
+   "kw": "gochujang",
+   "role": "sauce",
+   "must": [
+    "gochujang"
+   ],
+   "avoid": [
+    "noodle",
+    "chicken"
+   ],
+   "per100": [
+    200,
+    4,
+    44,
+    1
+   ]
+  },
+  "harissa": {
+   "kw": "harissa",
+   "role": "sauce",
+   "must": [
+    "harissa"
+   ],
+   "avoid": [
+    "chicken",
+    "couscous"
+   ],
+   "per100": [
+    100,
+    3,
+    10,
+    6
+   ]
+  },
+  "peanut butter": {
+   "kw": "peanut butter",
+   "role": "sauce",
+   "must": [
+    "peanut"
+   ],
+   "avoid": [
+    "cups",
+    "bar"
+   ],
+   "per100": [
+    588,
+    25,
+    20,
+    50
+   ]
+  },
+  "olive oil": {
+   "kw": "olive oil",
+   "role": "other",
+   "must": [
+    "olive",
+    "oil"
+   ],
+   "avoid": [
+    "spray",
+    "spread"
+   ],
+   "per100": [
+    884,
+    0,
+    0,
+    100
+   ]
+  },
+  "garlic": {
+   "kw": "garlic",
+   "role": "other",
+   "must": [
+    "garlic"
+   ],
+   "avoid": [
+    "bread",
+    "butter",
+    "paste",
+    "mayo",
+    "sauce",
+    "so juicy",
+    "seasoning",
+    "maggi",
+    "mix",
+    "granules",
+    "powder",
+    "chicken"
+   ],
+   "per100": [
+    149,
+    6,
+    33,
+    0.5
+   ]
+  },
+  "limes": {
+   "kw": "limes",
+   "role": "other",
+   "must": [
+    "lime"
+   ],
+   "avoid": [
+    "cordial",
+    "juice",
+    "pickle",
+    "drink",
+    "diet",
+    "lemon &",
+    "lemonade",
+    "sparkling",
+    "ltr",
+    "2l",
+    "1l"
+   ],
+   "per100": [
+    30,
+    0.7,
+    11,
+    0.2
+   ]
+  },
+  "stock": {
+   "kw": "stock cubes",
+   "role": "other",
+   "must": [
+    "stock"
+   ],
+   "avoid": [],
+   "per100": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "spices": {
+   "kw": "ground cumin",
+   "role": "other",
+   "must": [
+    "cumin",
+    "paprika",
+    "spice",
+    "curry powder"
+   ],
+   "any": true,
+   "avoid": [],
+   "per100": [
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ "dishes": [
+  {
+   "id": "chicken-tikka-rice",
+   "name": "Chicken tikka with rice & spinach",
+   "cuisine": "Indian",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "chicken thigh",
+     600
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "yogurt",
+     150
+    ],
+    [
+     "curry paste",
+     90
+    ],
+    [
+     "onions",
+     150
+    ],
+    [
+     "spinach",
+     200
+    ],
+    [
+     "spices",
+     5
+    ]
+   ],
+   "method": "Marinate thighs in yogurt + paste, roast 25 min at 200°C. Cook rice; fry onions, wilt spinach. Box up rice, chicken, greens."
+  },
+  {
+   "id": "chana-masala",
+   "name": "Chana masala with rice",
+   "cuisine": "Indian",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "budget"
+   ],
+   "ingredients": [
+    [
+     "chickpeas",
+     800
+    ],
+    [
+     "chopped tomatoes",
+     400
+    ],
+    [
+     "onions",
+     200
+    ],
+    [
+     "garlic",
+     15
+    ],
+    [
+     "curry paste",
+     60
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "spinach",
+     150
+    ]
+   ],
+   "method": "Soften onion + garlic, add paste, tomatoes, chickpeas; simmer 20 min. Stir in spinach. Serve over rice."
+  },
+  {
+   "id": "dal-rice",
+   "name": "Red lentil dal with rice",
+   "cuisine": "Indian",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "budget"
+   ],
+   "ingredients": [
+    [
+     "lentils",
+     300
+    ],
+    [
+     "onions",
+     150
+    ],
+    [
+     "garlic",
+     10
+    ],
+    [
+     "chopped tomatoes",
+     400
+    ],
+    [
+     "spices",
+     8
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "coconut milk",
+     200
+    ]
+   ],
+   "method": "Fry onion, garlic, spices; add lentils, tomatoes, water; simmer 25 min. Finish with coconut milk."
+  },
+  {
+   "id": "thai-green-curry",
+   "name": "Thai green chicken curry",
+   "cuisine": "Thai",
+   "portions": 4,
+   "tags": [],
+   "ingredients": [
+    [
+     "chicken breast",
+     600
+    ],
+    [
+     "curry paste",
+     80
+    ],
+    [
+     "coconut milk",
+     400
+    ],
+    [
+     "green beans",
+     200
+    ],
+    [
+     "peppers",
+     200
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "limes",
+     60
+    ]
+   ],
+   "method": "Fry paste, add coconut milk, chicken; simmer 10 min. Add veg 5 min. Lime to finish. Rice on the side."
+  },
+  {
+   "id": "prawn-noodles",
+   "name": "Prawn & veg rice noodles",
+   "cuisine": "Thai",
+   "portions": 4,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    [
+     "prawns",
+     400
+    ],
+    [
+     "rice noodles",
+     300
+    ],
+    [
+     "peppers",
+     200
+    ],
+    [
+     "carrots",
+     150
+    ],
+    [
+     "eggs",
+     120
+    ],
+    [
+     "soy sauce",
+     60
+    ],
+    [
+     "peanut butter",
+     40
+    ],
+    [
+     "limes",
+     60
+    ]
+   ],
+   "method": "Soak noodles. Stir-fry veg, prawns, egg; toss with noodles, soy, peanut butter, lime."
+  },
+  {
+   "id": "teriyaki-salmon",
+   "name": "Teriyaki salmon rice bowls",
+   "cuisine": "Japanese",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "salmon",
+     480
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "broccoli",
+     300
+    ],
+    [
+     "teriyaki sauce",
+     100
+    ],
+    [
+     "carrots",
+     150
+    ]
+   ],
+   "method": "Glaze salmon in teriyaki, roast 12 min. Steam broccoli. Bowl with rice, carrot ribbons."
+  },
+  {
+   "id": "beef-chilli",
+   "name": "Beef chilli with rice",
+   "cuisine": "Mexican",
+   "portions": 4,
+   "tags": [
+    "freezer"
+   ],
+   "ingredients": [
+    [
+     "beef mince",
+     500
+    ],
+    [
+     "black beans",
+     400
+    ],
+    [
+     "chopped tomatoes",
+     400
+    ],
+    [
+     "onions",
+     150
+    ],
+    [
+     "peppers",
+     200
+    ],
+    [
+     "spices",
+     10
+    ],
+    [
+     "basmati rice",
+     300
+    ]
+   ],
+   "method": "Brown mince, add onion, pepper, spices, tomatoes, beans; simmer 30 min. Serve over rice."
+  },
+  {
+   "id": "chicken-fajita-bowls",
+   "name": "Chicken fajita bowls",
+   "cuisine": "Mexican",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "chicken breast",
+     600
+    ],
+    [
+     "peppers",
+     300
+    ],
+    [
+     "onions",
+     200
+    ],
+    [
+     "spices",
+     10
+    ],
+    [
+     "basmati rice",
+     250
+    ],
+    [
+     "black beans",
+     400
+    ],
+    [
+     "limes",
+     60
+    ]
+   ],
+   "method": "Spice and roast chicken, peppers, onions 20 min. Bowl with rice, beans, lime."
+  },
+  {
+   "id": "bean-burrito-bowls",
+   "name": "Black bean burrito bowls",
+   "cuisine": "Mexican",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "budget"
+   ],
+   "ingredients": [
+    [
+     "black beans",
+     800
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "sweetcorn",
+     300
+    ],
+    [
+     "peppers",
+     200
+    ],
+    [
+     "tomatoes",
+     200
+    ],
+    [
+     "cheddar",
+     100
+    ],
+    [
+     "limes",
+     60
+    ]
+   ],
+   "method": "Warm beans with spices; roast peppers. Layer rice, beans, corn, tomato, cheese."
+  },
+  {
+   "id": "bolognese",
+   "name": "Beef bolognese pasta",
+   "cuisine": "Italian",
+   "portions": 4,
+   "tags": [
+    "freezer"
+   ],
+   "ingredients": [
+    [
+     "beef mince",
+     500
+    ],
+    [
+     "passata",
+     500
+    ],
+    [
+     "onions",
+     150
+    ],
+    [
+     "garlic",
+     10
+    ],
+    [
+     "carrots",
+     150
+    ],
+    [
+     "pasta",
+     350
+    ]
+   ],
+   "method": "Brown mince; add onion, carrot, garlic, passata; simmer 40 min. Toss with pasta."
+  },
+  {
+   "id": "pesto-chicken-pasta",
+   "name": "Pesto chicken pasta with broccoli",
+   "cuisine": "Italian",
+   "portions": 4,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    [
+     "chicken breast",
+     500
+    ],
+    [
+     "pasta",
+     350
+    ],
+    [
+     "pesto",
+     150
+    ],
+    [
+     "broccoli",
+     300
+    ],
+    [
+     "tomatoes",
+     200
+    ]
+   ],
+   "method": "Pan-fry chicken; boil pasta with broccoli for the last 3 min. Toss with pesto and tomatoes."
+  },
+  {
+   "id": "tuna-pasta-bake",
+   "name": "Tuna & sweetcorn pasta bake",
+   "cuisine": "Italian",
+   "portions": 4,
+   "tags": [
+    "budget"
+   ],
+   "ingredients": [
+    [
+     "tuna",
+     300
+    ],
+    [
+     "pasta",
+     350
+    ],
+    [
+     "passata",
+     400
+    ],
+    [
+     "sweetcorn",
+     200
+    ],
+    [
+     "cheddar",
+     120
+    ],
+    [
+     "onions",
+     100
+    ]
+   ],
+   "method": "Mix cooked pasta, tuna, corn, passata; top with cheddar; bake 20 min."
+  },
+  {
+   "id": "courgette-tomato-pasta",
+   "name": "Courgette & tomato pasta",
+   "cuisine": "Italian",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "budget"
+   ],
+   "ingredients": [
+    [
+     "pasta",
+     350
+    ],
+    [
+     "courgette",
+     400
+    ],
+    [
+     "chopped tomatoes",
+     400
+    ],
+    [
+     "garlic",
+     10
+    ],
+    [
+     "olive oil",
+     30
+    ],
+    [
+     "cheddar",
+     80
+    ]
+   ],
+   "method": "Fry courgette and garlic, add tomatoes; simmer 15 min; toss with pasta and cheese."
+  },
+  {
+   "id": "chicken-noodle-stirfry",
+   "name": "Chicken & veg noodle stir-fry",
+   "cuisine": "Chinese",
+   "portions": 4,
+   "tags": [
+    "quick"
+   ],
+   "ingredients": [
+    [
+     "chicken breast",
+     500
+    ],
+    [
+     "egg noodles",
+     300
+    ],
+    [
+     "peppers",
+     200
+    ],
+    [
+     "broccoli",
+     250
+    ],
+    [
+     "carrots",
+     150
+    ],
+    [
+     "soy sauce",
+     60
+    ],
+    [
+     "garlic",
+     10
+    ]
+   ],
+   "method": "Stir-fry chicken, then veg; add noodles, soy, garlic. Two minutes, done."
+  },
+  {
+   "id": "egg-fried-rice",
+   "name": "Egg fried rice with peas",
+   "cuisine": "Chinese",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "budget",
+    "quick"
+   ],
+   "ingredients": [
+    [
+     "basmati rice",
+     350
+    ],
+    [
+     "eggs",
+     240
+    ],
+    [
+     "peas",
+     250
+    ],
+    [
+     "carrots",
+     150
+    ],
+    [
+     "soy sauce",
+     50
+    ],
+    [
+     "onions",
+     100
+    ]
+   ],
+   "method": "Cook and cool rice; fry onion, carrot; scramble in eggs; add rice, peas, soy."
+  },
+  {
+   "id": "tofu-rice-bowls",
+   "name": "Crispy tofu & broccoli rice bowls",
+   "cuisine": "Chinese",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "tofu",
+     560
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "broccoli",
+     300
+    ],
+    [
+     "soy sauce",
+     60
+    ],
+    [
+     "garlic",
+     10
+    ],
+    [
+     "peppers",
+     200
+    ]
+   ],
+   "method": "Press and roast tofu 25 min; steam broccoli; toss all with soy-garlic; serve on rice."
+  },
+  {
+   "id": "gochujang-chicken",
+   "name": "Gochujang chicken rice bowls",
+   "cuisine": "Korean",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "chicken thigh",
+     600
+    ],
+    [
+     "gochujang",
+     80
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "cabbage",
+     300
+    ],
+    [
+     "carrots",
+     150
+    ],
+    [
+     "soy sauce",
+     30
+    ]
+   ],
+   "method": "Marinate thighs in gochujang + soy, roast 25 min. Quick-pickle cabbage and carrot. Bowl with rice."
+  },
+  {
+   "id": "bibimbap-bowls",
+   "name": "Bibimbap-style veg & egg bowls",
+   "cuisine": "Korean",
+   "portions": 4,
+   "tags": [
+    "veg"
+   ],
+   "ingredients": [
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "eggs",
+     240
+    ],
+    [
+     "spinach",
+     200
+    ],
+    [
+     "carrots",
+     200
+    ],
+    [
+     "mushrooms",
+     250
+    ],
+    [
+     "gochujang",
+     60
+    ],
+    [
+     "soy sauce",
+     30
+    ]
+   ],
+   "method": "Sauté each veg separately; fry eggs; assemble on rice with gochujang."
+  },
+  {
+   "id": "shakshuka",
+   "name": "Shakshuka with pitta",
+   "cuisine": "Middle Eastern",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "quick"
+   ],
+   "ingredients": [
+    [
+     "eggs",
+     480
+    ],
+    [
+     "chopped tomatoes",
+     800
+    ],
+    [
+     "peppers",
+     300
+    ],
+    [
+     "onions",
+     150
+    ],
+    [
+     "garlic",
+     10
+    ],
+    [
+     "spices",
+     8
+    ],
+    [
+     "pitta",
+     240
+    ]
+   ],
+   "method": "Soften onion, pepper, garlic, spices; add tomatoes; crack in eggs; cover 8 min. Pitta to dip."
+  },
+  {
+   "id": "shawarma-bowls",
+   "name": "Chicken shawarma bowls",
+   "cuisine": "Middle Eastern",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "chicken thigh",
+     600
+    ],
+    [
+     "yogurt",
+     150
+    ],
+    [
+     "spices",
+     10
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "tomatoes",
+     200
+    ],
+    [
+     "onions",
+     100
+    ],
+    [
+     "pitta",
+     120
+    ]
+   ],
+   "method": "Marinate in yogurt + spices; roast 25 min; slice. Bowl with rice, salad, yogurt."
+  },
+  {
+   "id": "harissa-veg-couscous",
+   "name": "Harissa roast veg & couscous",
+   "cuisine": "North African",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "budget"
+   ],
+   "ingredients": [
+    [
+     "couscous",
+     300
+    ],
+    [
+     "aubergine",
+     400
+    ],
+    [
+     "courgette",
+     300
+    ],
+    [
+     "peppers",
+     200
+    ],
+    [
+     "harissa",
+     60
+    ],
+    [
+     "chickpeas",
+     400
+    ],
+    [
+     "olive oil",
+     30
+    ]
+   ],
+   "method": "Roast veg + chickpeas in harissa and oil 30 min. Steam couscous; fold together."
+  },
+  {
+   "id": "greek-chicken-bowls",
+   "name": "Greek chicken & feta bowls",
+   "cuisine": "Greek",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "chicken breast",
+     600
+    ],
+    [
+     "potatoes",
+     600
+    ],
+    [
+     "tomatoes",
+     300
+    ],
+    [
+     "feta",
+     150
+    ],
+    [
+     "olive oil",
+     30
+    ],
+    [
+     "garlic",
+     10
+    ],
+    [
+     "spinach",
+     150
+    ]
+   ],
+   "method": "Roast garlicky potatoes 35 min; griddle chicken. Bowl with tomatoes, spinach, feta."
+  },
+  {
+   "id": "halloumi-wraps",
+   "name": "Halloumi & roast veg wraps",
+   "cuisine": "Greek",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "quick"
+   ],
+   "ingredients": [
+    [
+     "halloumi",
+     450
+    ],
+    [
+     "tortilla wraps",
+     320
+    ],
+    [
+     "peppers",
+     300
+    ],
+    [
+     "courgette",
+     300
+    ],
+    [
+     "harissa",
+     40
+    ],
+    [
+     "yogurt",
+     150
+    ]
+   ],
+   "method": "Roast veg 25 min; fry halloumi; wrap with harissa yogurt. Keep veg and halloumi boxed, wrap on the day."
+  },
+  {
+   "id": "cottage-pie",
+   "name": "Cottage pie",
+   "cuisine": "British",
+   "portions": 4,
+   "tags": [
+    "freezer"
+   ],
+   "ingredients": [
+    [
+     "beef mince",
+     500
+    ],
+    [
+     "potatoes",
+     900
+    ],
+    [
+     "onions",
+     150
+    ],
+    [
+     "carrots",
+     200
+    ],
+    [
+     "peas",
+     150
+    ],
+    [
+     "stock",
+     10
+    ],
+    [
+     "passata",
+     200
+    ]
+   ],
+   "method": "Mince, onion, carrot, stock, passata simmer 25 min; top with mash; bake 25 min."
+  },
+  {
+   "id": "chicken-tray-bake",
+   "name": "Chicken, potato & broccoli tray bake",
+   "cuisine": "British",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "chicken thigh",
+     700
+    ],
+    [
+     "potatoes",
+     700
+    ],
+    [
+     "broccoli",
+     300
+    ],
+    [
+     "olive oil",
+     30
+    ],
+    [
+     "garlic",
+     15
+    ],
+    [
+     "stock",
+     5
+    ]
+   ],
+   "method": "Everything on one tray, 200°C 40 min; broccoli in for the last 15."
+  },
+  {
+   "id": "salmon-sweet-potato",
+   "name": "Salmon & sweet potato tray bake",
+   "cuisine": "British",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "salmon",
+     480
+    ],
+    [
+     "sweet potato",
+     700
+    ],
+    [
+     "broccoli",
+     300
+    ],
+    [
+     "olive oil",
+     25
+    ],
+    [
+     "limes",
+     60
+    ]
+   ],
+   "method": "Roast sweet potato 25 min, add salmon and broccoli 12 min. Lime over."
+  },
+  {
+   "id": "satay-chicken-bowls",
+   "name": "Peanut satay chicken bowls",
+   "cuisine": "Indonesian",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "chicken thigh",
+     600
+    ],
+    [
+     "peanut butter",
+     100
+    ],
+    [
+     "soy sauce",
+     40
+    ],
+    [
+     "coconut milk",
+     200
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "cabbage",
+     200
+    ],
+    [
+     "carrots",
+     150
+    ],
+    [
+     "limes",
+     60
+    ]
+   ],
+   "method": "Blend peanut butter, soy, coconut milk, lime into satay; roast chicken in half; sauce the rest. Rice + slaw."
+  },
+  {
+   "id": "chickpea-spinach-stew",
+   "name": "Spanish chickpea & spinach stew",
+   "cuisine": "Spanish",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "budget"
+   ],
+   "ingredients": [
+    [
+     "chickpeas",
+     800
+    ],
+    [
+     "spinach",
+     300
+    ],
+    [
+     "chopped tomatoes",
+     400
+    ],
+    [
+     "onions",
+     150
+    ],
+    [
+     "garlic",
+     15
+    ],
+    [
+     "spices",
+     8
+    ],
+    [
+     "olive oil",
+     30
+    ],
+    [
+     "potatoes",
+     400
+    ]
+   ],
+   "method": "Fry onion, garlic, smoked paprika; add tomatoes, chickpeas, potatoes; simmer 20 min; wilt in spinach."
+  },
+  {
+   "id": "jerk-chicken-rice-peas",
+   "name": "Jerk-style chicken with rice & peas",
+   "cuisine": "Caribbean",
+   "portions": 4,
+   "tags": [
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "chicken thigh",
+     700
+    ],
+    [
+     "spices",
+     12
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "black beans",
+     400
+    ],
+    [
+     "coconut milk",
+     200
+    ],
+    [
+     "limes",
+     60
+    ],
+    [
+     "cabbage",
+     200
+    ]
+   ],
+   "method": "Spice-rub thighs, roast 30 min. Cook rice in coconut milk with beans. Cabbage slaw with lime."
+  },
+  {
+   "id": "turkey-mince-lettuce-rice",
+   "name": "Turkey mince rice bowls",
+   "cuisine": "Chinese",
+   "portions": 4,
+   "tags": [
+    "high-protein",
+    "quick"
+   ],
+   "ingredients": [
+    [
+     "turkey mince",
+     500
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "soy sauce",
+     60
+    ],
+    [
+     "garlic",
+     10
+    ],
+    [
+     "mushrooms",
+     250
+    ],
+    [
+     "peas",
+     200
+    ],
+    [
+     "carrots",
+     150
+    ]
+   ],
+   "method": "Brown mince with garlic; add mushrooms, carrots, peas, soy. Serve on rice."
+  },
+  {
+   "id": "paneer-curry",
+   "name": "Paneer & pea curry with rice",
+   "cuisine": "Indian",
+   "portions": 4,
+   "tags": [
+    "veg",
+    "high-protein"
+   ],
+   "ingredients": [
+    [
+     "paneer",
+     450
+    ],
+    [
+     "peas",
+     250
+    ],
+    [
+     "chopped tomatoes",
+     400
+    ],
+    [
+     "onions",
+     150
+    ],
+    [
+     "curry paste",
+     70
+    ],
+    [
+     "basmati rice",
+     300
+    ],
+    [
+     "yogurt",
+     100
+    ]
+   ],
+   "method": "Fry paneer; make sauce from onion, paste, tomatoes; add peas and paneer; finish with yogurt."
+  }
+ ]
+}

@@ -38,7 +38,7 @@ def classify(*texts: str) -> str:
 _FROZEN = re.compile(r"\bfrozen\b|\bice cream\b|\bice lollies\b", re.I)
 _READY = re.compile(
     r"\b(breaded|breadcrumbs?|crumbed|in crumb|battered|tempura|southern fried|crispy|crunchy|kyivs?|kievs?|goujons?|nuggets?|dippers?|grills?|chargrills?|popcorn chicken|bites|"
-    r"cooked|roast(ed)?|smoked|ready|microwave|pots?|meal|pies?|pizza|quiche|sandwich(es)?|wraps?|sushi|kits?|katsu|schnitzel|escalopes?|"
+    r"cooked|roast(ed)?|smoked|ready|microwave|pots?|meal|pies?|pizza|quiche|sandwich(es)?|filled wraps?|sushi|kits?|katsu|schnitzel|escalopes?|"
     r"coated|glazed|stuffed|marinated|seasoned|dusted|buttermilk|sticky|bbq|parmigiana|en croute|mash(ed)?|slices|just cook|slow cooked|instant|"
     r"snacks?|crisps|biscuits?|cakes?|desserts?|puddings?|soups?|dips?|hummus|houmous|ham|salami|chorizo|pâté|pate|deli|dunkers|lunchables|"
     r"in a|with a)\b", re.I)
