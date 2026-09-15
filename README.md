@@ -70,6 +70,8 @@ Measured on prod (Playwright, desktop, 2026-09-15): time to **first product row*
 | function `/tmp` | curl_cffi responses per instance (best-effort) | 6 h |
 | cron | `/api/warm` 06:00 UTC re-fetches the default URLs through the public host so the CDN is warm before you wake up (`CRON_SECRET` gates it if set) | daily |
 
+Rows carry **department / aisle** (`sains/categories.py` rolls Sainsbury's leaf categories up with keyword rules; the response's `cat_filters` tree is a hint) → category chips + a grouped *Category* sort.
+
 Client fetches **one keyword at a time, two in flight** — rows stream in as each lands, cold loads never put more than 2 scrapes on Sainsbury's, and each URL becomes a reusable cache entry. Lists render 20 rows and infinite-scroll the rest.
 
 **Nectar:** of ~460 current offers, ~450 are Nectar Prices — that's Sainsbury's strategy, not a filter of ours. The **All / Nectar / No card** toggle and **£/unit** sort exist so card-free shoppers can still find the cheap stuff.

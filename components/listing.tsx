@@ -8,13 +8,14 @@ import { NEW_KWS, STAPLES } from "@/lib/keywords";
 
 type Path = "offers" | "new" | "search";
 type Nectar = "all" | "nectar" | "none";
-type Sort = "pct" | "price" | "unit" | "order";
+type Sort = "pct" | "price" | "unit" | "category" | "order";
 type Props = { path: Path; placeholder: string; hasMin?: boolean; required?: boolean };
 
 const PAGE = 20;
 const DEFAULTS: Record<Path, string[]> = { offers: STAPLES, new: NEW_KWS, search: [] };
 const NECTAR: [Nectar, string][] = [["all", "All deals"], ["nectar", "Nectar"], ["none", "No card"]];
-const SORTS: [Sort, string][] = [["pct", "% off"], ["price", "Price"], ["unit", "£/unit"], ["order", "Relevance"]];
+const SORTS: [Sort, string][] = [["pct", "% off"], ["price", "Price"], ["unit", "£/unit"], ["category", "Category"], ["order", "Relevance"]];
+const cat = (i: Item) => i.category || "Other";
 
 // "£12.5/kg" -> 12.5 ; "£1.2/100g" -> 12 ; per-each isn't comparable -> last
 const unitVal = (u: string) => {
@@ -42,6 +43,7 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
   const [nectar, setNectar] = useState<Nectar>("all");
   const [sort, setSort] = useState<Sort>(path === "offers" ? "pct" : "order");
   const [offersOnly, setOffersOnly] = useState(false);
+  const [catFilter, setCatFilter] = useState("");
   const offers = path === "offers" || (path === "search" && offersOnly);
   const isNew = path === "new";
   // everything fetched is keyed by the request, so a new request shows fresh state without resetting in an effect
@@ -84,13 +86,21 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
     return () => ctrl.abort();
   }, [key]);
 
+  const categories = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const i of items) m.set(cat(i), (m.get(cat(i)) ?? 0) + 1);
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  }, [items]);
+
   const visible = useMemo(() => {
-    const v = items.filter((i) => i.pct >= min && (nectar === "all" || (nectar === "nectar") === i.nectar));
-    if (sort === "pct") v.sort((a, b) => b.pct - a.pct || (a.price ?? 0) - (b.price ?? 0));
+    const v = items.filter((i) => i.pct >= min && (nectar === "all" || (nectar === "nectar") === i.nectar) && (!catFilter || cat(i) === catFilter));
+    const byDeal = (a: Item, b: Item) => b.pct - a.pct || (a.price ?? 0) - (b.price ?? 0);
+    if (sort === "pct") v.sort(byDeal);
     else if (sort === "price") v.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     else if (sort === "unit") v.sort((a, b) => unitVal(a.unit) - unitVal(b.unit));
+    else if (sort === "category") v.sort((a, b) => cat(a).localeCompare(cat(b)) || (a.subcategory ?? "").localeCompare(b.subcategory ?? "") || byDeal(a, b));
     return v;
-  }, [items, min, nectar, sort]);
+  }, [items, min, nectar, sort, catFilter]);
 
   useEffect(() => { // infinite scroll: reveal the next page when the sentinel nears the viewport
     const el = sentinel.current;
@@ -135,13 +145,23 @@ export function Listing({ path, placeholder, hasMin = false, required = false }:
           </span>
         </div>
       )}
+      {categories.length > 1 && (
+        <div className="flex flex-wrap gap-1.5" role="group" aria-label="Category">
+          {[["", `All (${items.length})`] as [string, string], ...categories.map(([c, n]) => [c, `${c} (${n})`] as [string, string])].map(([c, l]) => (
+            <button key={c} type="button" aria-pressed={catFilter === c} onClick={() => setCatFilter(c)}
+              className={`rounded-full border px-2.5 py-0.5 text-xs transition-[color,background-color,border-color] duration-150 ease-[cubic-bezier(0.2,0,0,1)] ${catFilter === c ? "bg-foreground text-background border-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+              {l}
+            </button>
+          ))}
+        </div>
+      )}
       {loading && (
         <div className="bg-muted h-0.5 overflow-hidden rounded-full" aria-hidden>
           <div className="bg-foreground h-full transition-[width] duration-300 ease-[cubic-bezier(0.2,0,0,1)]" style={{ width: `${(progress.done / Math.max(1, progress.total)) * 100}%` }} />
         </div>
       )}
       {required && kws.length === 0 ? <p className="text-muted-foreground text-xs">Type to search.</p>
-        : <ItemsTable items={visible.slice(0, shown)} loading={loading && items.length === 0} error={error} />}
+        : <ItemsTable items={visible.slice(0, shown)} loading={loading && items.length === 0} error={error} groupBy={sort === "category" ? cat : undefined} />}
       {nectar === "none" && !loading && visible.length < 5 && items.length > 0 && (
         <p className="text-muted-foreground text-xs">Almost all Sainsbury&apos;s online promotions are Nectar Prices now — card-free deals are mostly meal deals and multibuys. Try sort by £/unit for cheap without a card.</p>
       )}

@@ -1,4 +1,5 @@
 "use client";
+import { Fragment } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -27,7 +28,7 @@ function Deal({ i }: { i: Item }) {
   );
 }
 
-export function ItemsTable({ items, loading, error }: { items?: Item[]; loading: boolean; error?: string }) {
+export function ItemsTable({ items, loading, error, groupBy }: { items?: Item[]; loading: boolean; error?: string; groupBy?: (i: Item) => string }) {
   if (error) return <p className="text-destructive text-sm">{error}</p>;
   if (loading) return <div className="space-y-2">{Array.from({ length: 8 }, (_, i) => <Skeleton key={i} className="h-12 w-full" />)}</div>;
   if (!items?.length) return <p className="text-muted-foreground text-sm">Nothing found.</p>;
@@ -42,14 +43,20 @@ export function ItemsTable({ items, loading, error }: { items?: Item[]; loading:
         </TableRow>
       </TableHeader>
       <TableBody>
-        {items.map((i) => (
-          <TableRow key={i.uid}>
+        {items.map((i, n) => (
+          <Fragment key={i.uid}>
+          {groupBy && (n === 0 || groupBy(items[n - 1]) !== groupBy(i)) && (
+            <TableRow className="hover:bg-transparent">
+              <TableCell colSpan={4} className="bg-muted/40 py-1.5 font-serif text-base">{groupBy(i)}</TableCell>
+            </TableRow>
+          )}
+          <TableRow>
             <TableCell className="whitespace-normal">
               <div className="flex items-center gap-3">
                 <Thumb src={i.thumb} />
                 <div className="min-w-0">
                   <a href={i.url} target="_blank" rel="noreferrer" className="hover:underline">{i.name}</a>
-                  <div className="text-muted-foreground text-xs">{i.unit}{i.life && ` · ${i.life}`}</div>
+                  <div className="text-muted-foreground text-xs">{i.unit}{i.life && ` · ${i.life}`}{i.subcategory && ` · ${i.subcategory}`}</div>
                   <div className="mt-1 sm:hidden"><Deal i={i} /></div>
                 </div>
               </div>
@@ -61,6 +68,7 @@ export function ItemsTable({ items, loading, error }: { items?: Item[]; loading:
             <TableCell className="hidden whitespace-normal sm:table-cell"><Deal i={i} /></TableCell>
             <TableCell className="text-muted-foreground hidden text-xs tabular-nums md:table-cell">{i.ends === today() ? <span className="text-amber-600 dark:text-amber-400">today</span> : i.ends.slice(5)}</TableCell>
           </TableRow>
+          </Fragment>
         ))}
       </TableBody>
     </Table>
