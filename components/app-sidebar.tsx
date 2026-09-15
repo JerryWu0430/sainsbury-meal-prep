@@ -34,7 +34,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
                 {href === "/favourites" && (
                   // stays mounted so the badge can animate both ways; the count itself pops per change
-                  <span className="t-badge group-data-[collapsible=icon]:hidden" data-open={favs.length > 0}>
+                  <span className="t-badge group-data-[collapsible=icon]:hidden" data-anchor="row" data-open={favs.length > 0}>
                     <span className="t-badge-dot text-sidebar-foreground flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium tabular-nums select-none">
                       <Digits value={favs.length || ""} />
                     </span>
