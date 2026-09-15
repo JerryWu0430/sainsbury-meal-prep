@@ -8,7 +8,7 @@ from datetime import date
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.usage import UsageLimits
 
-from . import mealprep, products, store
+from . import dishes, mealprep, products, store
 from .config import KEY_ENV, MODEL, STORE_CODE
 
 
@@ -56,7 +56,7 @@ Tools scrape Sainsbury's live with a 1.5 s throttle per keyword — be deliberat
 Prices are the online range; the shelf at this store may differ. "Nectar" prices need a Nectar card. Offers end on the date shown.
 {"Their starred favourites: " + "; ".join(ctx.deps.favourites[:20]) + ". Mention when one is on offer." if ctx.deps.favourites else ""}
 Each item has form = ingredient (raw/staple you cook), ready (breaded, cooked, pots, meals) or frozen — keep them apart when recommending, as the shopper does.
-Answer in tight markdown: item, price (was → now, % off), promo, end date. For meal plans give a shopping list, total and per-portion cost, and 2-3 line method. Don't invent products or prices — only report what tools return."""
+Answer in tight markdown: item, price (was → now, % off), promo, end date. For meal plans prefer rank_dishes (real dishes, costed, with macros); give a shopping list, total and per-portion cost, macros vs the shopper's goals if they gave any, and a 2-3 line method. Don't invent products or prices — only report what tools return."""
 
 
 @agent.tool
@@ -82,6 +82,19 @@ def meal_prep_plan(ctx: RunContext[Deps], full: bool = False) -> dict:
     """Rule-based batch-cook plan from current offers: picks per food group + 3 combined ideas with cost/portion."""
     p = mealprep.plan(full=full)
     return {"ideas": [{**i, "items": _trim(i["items"], 4)} for i in p["ideas"]], "picks": {g: _trim(v, 5) for g, v in p["picks"].items()}}
+
+
+@agent.tool_plain
+def rank_dishes(cuisine: str | None = None, sort: str = "per_portion", top: int = 8) -> list[dict]:
+    """Batch-cook dishes from the dish bank priced against today's range (≈40 keyword searches, cached).
+    sort: per_portion | protein (protein per £) | offers. Returns cost/portion, macros/portion, matched products and offers."""
+    bank = dishes.load()
+    cat = dishes.catalogue_for(bank)
+    out = []
+    for d in dishes.rank(bank, cat, cuisine, sort)[:top]:
+        out.append({k: d[k] for k in ("name", "cuisine", "portions", "per_portion", "macros", "protein_per_pound", "on_offer", "n_ingredients", "missing", "method")}
+                   | {"buy": [f"{l['grams']}g {l['ref']} → {l['product']['name']} £{l['product']['price']}" + (f" ({l['product']['pct']}% off)" if l["product"].get("pct") else "") for l in d["lines"]]})
+    return out
 
 
 @agent.tool

@@ -162,6 +162,54 @@ def chat(store_code: str = typer.Option(STORE_CODE, "--store", "-s"), model: str
         con.print(Markdown(res.output))
 
 
+@app.command()
+def plan(cuisine: str = typer.Option(None, "--cuisine", "-c"), sort: str = typer.Option("per_portion", help="per_portion|protein|offers"), top: int = 12):
+    """Dishes from the bank priced against today's range: £/portion, macros, offers."""
+    from . import dishes
+    bank = dishes.load()
+    with con.status("") as st:
+        cat = dishes.catalogue_for(bank, on_progress=lambda kw: st.update(f"pricing [bold]{kw}[/]…"))
+    ranked = dishes.rank(bank, cat, cuisine, sort)[:top]
+    if state["json"]:
+        print(json.dumps(ranked, indent=1)); return
+    t = Table(title=f"plan · sort {sort}", header_style="bold", box=box.SIMPLE, expand=True)
+    for c, j in (("£/pt", "right"), ("dish", "left"), ("cuisine", "left"), ("kcal", "right"), ("P", "right"), ("C", "right"), ("F", "right"), ("P/£", "right"), ("offers", "right")):
+        t.add_column(c, justify=j, no_wrap=c != "dish", ratio=4 if c == "dish" else None)
+    for d in ranked:
+        m = d["macros"]
+        t.add_row(f"£{d['per_portion']:.2f}", d["name"] + (f"  [dim](no price: {', '.join(d['missing'])})[/]" if d["missing"] else ""), d["cuisine"],
+                  f"{m['kcal']:.0f}", f"{m['protein']:.0f}g", f"{m['carbs']:.0f}g", f"{m['fat']:.0f}g", f"{d['protein_per_pound']:.0f}g", f"{d['on_offer']}/{d['n_ingredients']}")
+    con.print(t)
+
+
+dishes_app = typer.Typer(help="Dish bank: list / import (same schema as data/dishes.json).", no_args_is_help=True)
+app.add_typer(dishes_app, name="dishes")
+
+
+@dishes_app.command("list")
+def dishes_list():
+    from . import dishes
+    for d in dishes.load()["dishes"]:
+        con.print(f"[bold]{d['id']}[/] {d['name']} · {d['cuisine']} · {d['portions']} pt · {', '.join(r for r, _ in d['ingredients'])}")
+
+
+@dishes_app.command("import")
+def dishes_import(path: str):
+    """Merge dishes (by id) and ingredients (by name) from a JSON file into data/dishes.json."""
+    from . import dishes
+    bank, new = dishes.load(), json.loads(open(path).read())
+    bank["ingredients"].update(new.get("ingredients", {}))
+    by_id = {d["id"]: d for d in bank["dishes"]}
+    for d in new.get("dishes", []):
+        missing = [r for r, _ in d["ingredients"] if r not in bank["ingredients"]]
+        if missing:
+            raise typer.BadParameter(f"{d['id']}: unknown ingredients {missing}")
+        by_id[d["id"]] = d
+    bank["dishes"] = list(by_id.values())
+    dishes.BANK.write_text(json.dumps(bank, indent=1, ensure_ascii=False))
+    con.print(f"bank now {len(bank['dishes'])} dishes / {len(bank['ingredients'])} ingredients")
+
+
 @app.command(name="cache-clear")
 def cache_clear():
     """Drop cached API responses."""

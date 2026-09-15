@@ -12,7 +12,7 @@ from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from sains import agent, mealprep, products, store
+from sains import agent, dishes, mealprep, products, store
 from sains.api import Blocked
 from sains.cli import NEW_KWS, STAPLES
 from sains.config import MODEL, STORE_CODE
@@ -100,6 +100,13 @@ def get_search(res: Response, q: str, offers: bool = False, new: bool = False, s
     return products.search(q, offers=offers, new=new, sort=sort, max_pages=pages, direct=True)
 
 
+@app.get("/api/dishes")
+def get_dishes(res: Response):
+    """The dish bank (ingredients + dishes) — the dashboard bundles it, this is for other clients."""
+    res.headers.update(CACHE_HDR)
+    return dishes.load()
+
+
 @app.get("/api/mealprep")
 def get_mealprep(res: Response, full: bool = False):
     res.headers.update(CACHE_HDR)
@@ -114,8 +121,9 @@ def get_warm(request: Request):
         raise HTTPException(401)
     host = request.headers.get("x-forwarded-host") or request.headers.get("host")
     base = f"https://{host}" if host and "localhost" not in host else str(request.base_url).rstrip("/")
+    dish_kws = sorted({s["kw"] for s in dishes.load()["ingredients"].values()})
     urls = [f"{base}/api/search?q={quote(k)}&offers={o}&new={n}" for k, o, n in
-            [(k, "true", "false") for k in STAPLES] + [(k, "false", "true") for k in NEW_KWS]] + [f"{base}/api/mealprep?full=false", f"{base}/api/store"]
+            [(k, "true", "false") for k in STAPLES] + [(k, "false", "true") for k in NEW_KWS] + [(k, "false", "false") for k in dish_kws]] + [f"{base}/api/mealprep?full=false", f"{base}/api/store"]
     out = {}
     for u in urls:
         try:
