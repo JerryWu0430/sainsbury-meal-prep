@@ -31,3 +31,22 @@ def classify(*texts: str) -> str:
             if text and rx.search(text):
                 return dept
     return "Other"
+
+
+# ---- form: is this an ingredient you cook, something ready-made, or frozen? ----
+# Staples you cook with (raw meat/fish, produce, block cheese, sausages, cooking sauces, bread) are ingredients.
+_FROZEN = re.compile(r"\bfrozen\b|\bice cream\b|\bice lollies\b", re.I)
+_READY = re.compile(
+    r"\b(breaded|breadcrumbs?|crumbed|in crumb|battered|tempura|southern fried|crispy|crunchy|kyiv|kiev|goujons?|nuggets?|dippers?|grills?|chargrills?|popcorn chicken|bites|"
+    r"cooked|roast(ed)?|smoked|ready|microwave|pots?|meal|pies?|pizza|quiche|sandwich(es)?|wraps?|sushi|kits?|katsu|schnitzel|escalopes?|"
+    r"coated|glazed|stuffed|marinated|seasoned|dusted|buttermilk|sticky|bbq|parmigiana|en croute|mash(ed)?|slices|just cook|slow cooked|instant|"
+    r"snacks?|crisps|biscuits?|cakes?|desserts?|puddings?|soups?|dips?|hummus|houmous|ham|salami|chorizo|pâté|pate|deli|dunkers|lunchables|"
+    r"in a|with a)\b", re.I)
+
+
+def form(*texts: str) -> str:
+    """'frozen' | 'ready' | 'ingredient' from category names + product name."""
+    blob = " ".join(t for t in texts if t)
+    if _FROZEN.search(blob):
+        return "frozen"
+    return "ready" if _READY.search(blob) else "ingredient"

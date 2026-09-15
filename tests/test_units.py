@@ -1,6 +1,6 @@
 """Offline unit tests — no network. Scraper shape, title cleanup, geocode routing."""
 from sains.mealprep import _short
-from sains.categories import classify
+from sains.categories import classify, form
 from sains.products import _catmap, slim
 
 TREE = [{"id": "all", "name": "All Categories", "children": [
@@ -24,6 +24,18 @@ def test_catmap_and_category():
     unknown = slim({**RAW, "categories": [{"id": "1", "name": "Wings"}], "name": "Chicken wings 500g"}, m)
     assert (unknown["category"], unknown["subcategory"]) == ("Meat", "Wings")
     assert _catmap(TREE[0]["children"])["*"] == "Meat"  # unwrapped root works too
+
+
+def test_form():
+    assert form("Chicken", "Sainsbury's 640g British Fresh Chicken Breast Mini Fillets") == "ingredient"
+    assert form("Chicken", "Sainsbury's Fresh Breaded British Chicken Steaks x4") == "ready"
+    assert form("Chicken", "Sainsbury's Just Cook Hunters Chicken Breasts 430g") == "ready"
+    assert form("Cheese", "Cathedral City Mature Cheddar Cheese 350g") == "ingredient"
+    assert form("Cheese", "Strings & Things Cheestrings Cheese Snack x8") == "ready"
+    assert form("Sausages", "Sainsbury's 8 x British Turkey Sausages 454g") == "ingredient"
+    assert form("Vegetables", "Sainsbury's Traditionally Sliced Runner Beans 160g") == "ingredient"
+    assert form("Rice", "Tilda Microwave Rice Coconut Basmati 250g") == "ready"
+    assert form("Frozen chicken", "Humza Quick Frozen Chicken Breast Fillets 1kg") == "frozen"
 
 
 def test_classify():

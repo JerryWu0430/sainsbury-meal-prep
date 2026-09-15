@@ -66,6 +66,7 @@ def get_stores(res: Response, q: str, limit: int = Query(8, le=20)):
 class Ask(BaseModel):
     question: str
     store: str | None = None
+    favourites: list[str] = []
 
 
 @app.post("/api/ask")
@@ -75,7 +76,7 @@ async def post_ask(body: Ask):
         agent.check_model()
     except agent.ConfigError as e:
         raise HTTPException(503, str(e))
-    gen = agent.stream(body.question, body.store or STORE_CODE)
+    gen = agent.stream(body.question, body.store or STORE_CODE, favourites=tuple(body.favourites[:20]))
     return StreamingResponse(gen, media_type="text/plain; charset=utf-8", headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no", "X-Model": MODEL})
 
 
@@ -122,6 +123,14 @@ def get_warm(request: Request):
         except Exception as e:  # keep warming the rest
             out[u.split("/api/", 1)[1]] = str(e)[:60]
     return out
+
+
+@app.get("/api/items")
+def get_items(res: Response, uids: str):
+    """Batch lookup by product uid (≤30) — favourites refresh."""
+    res.headers["Cache-Control"] = "public, s-maxage=3600, stale-while-revalidate=3600"
+    ids = [u for u in uids.split(",") if u.strip().isdigit()][:30]
+    return products.by_uids(ids) if ids else []
 
 
 @app.get("/api/item/{uid}")

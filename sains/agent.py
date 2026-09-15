@@ -15,6 +15,7 @@ from .config import KEY_ENV, MODEL, STORE_CODE
 @dataclass
 class Deps:
     store_code: str = STORE_CODE
+    favourites: tuple[str, ...] = ()  # names the shopper has starred in the dashboard
 
 
 class ConfigError(RuntimeError):
@@ -29,7 +30,7 @@ def check_model(model: str = MODEL) -> None:
 
 
 # Tool results are trimmed to what an LLM needs: fewer tokens, same decisions.
-_KEEP = ("uid", "name", "price", "was", "pct", "unit", "promo", "nectar", "ends", "life")
+_KEEP = ("uid", "name", "price", "was", "pct", "unit", "promo", "nectar", "ends", "life", "category", "form")
 
 
 def _trim(items: list[dict], limit: int) -> list[dict]:
@@ -53,6 +54,8 @@ Today is {date.today():%A %d %B %Y}. They cook in batches (meal prep, ~4 portion
 
 Tools scrape Sainsbury's live with a 1.5 s throttle per keyword — be deliberate: pick a few specific keywords, not many broad ones (≤ 6 tool calls).
 Prices are the online range; the shelf at this store may differ. "Nectar" prices need a Nectar card. Offers end on the date shown.
+{"Their starred favourites: " + "; ".join(ctx.deps.favourites[:20]) + ". Mention when one is on offer." if ctx.deps.favourites else ""}
+Each item has form = ingredient (raw/staple you cook), ready (breaded, cooked, pots, meals) or frozen — keep them apart when recommending, as the shopper does.
 Answer in tight markdown: item, price (was → now, % off), promo, end date. For meal plans give a shopping list, total and per-portion cost, and 2-3 line method. Don't invent products or prices — only report what tools return."""
 
 
@@ -95,13 +98,13 @@ def find_stores(query: str) -> dict:
     return store.find(query)
 
 
-def ask(question: str, store_code: str = STORE_CODE, history=None, model: str = MODEL):
+def ask(question: str, store_code: str = STORE_CODE, history=None, model: str = MODEL, favourites: tuple[str, ...] = ()):
     check_model(model)
-    return agent.run_sync(question, model=model, deps=Deps(store_code), message_history=history, usage_limits=LIMITS)
+    return agent.run_sync(question, model=model, deps=Deps(store_code, favourites), message_history=history, usage_limits=LIMITS)
 
 
-async def stream(question: str, store_code: str = STORE_CODE, model: str = MODEL):
+async def stream(question: str, store_code: str = STORE_CODE, model: str = MODEL, favourites: tuple[str, ...] = ()):
     check_model(model)
-    async with agent.run_stream(question, model=model, deps=Deps(store_code), usage_limits=LIMITS) as result:
+    async with agent.run_stream(question, model=model, deps=Deps(store_code, favourites), usage_limits=LIMITS) as result:
         async for delta in result.stream_text(delta=True):
             yield delta

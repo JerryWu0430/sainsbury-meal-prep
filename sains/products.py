@@ -4,7 +4,7 @@ import os
 import httpx
 
 from .api import PRODUCT, get
-from .categories import classify
+from .categories import classify, form
 from .config import MAX_PAGES, PAGE_SIZE
 
 # On Vercel every internal caller (agent tools, /api/offers, meal prep) goes through the public /api/search URL,
@@ -37,6 +37,12 @@ def search(keyword: str, *, offers=False, new=False, sort="relevance", max_pages
         if len(items) < PAGE_SIZE or len(out) >= total:
             break
     return out
+
+
+def by_uids(uids: list[str]) -> list[dict]:
+    """Batch lookup (one request) — used to refresh favourites."""
+    data = get(PRODUCT, {"uids": ",".join(uids[:30])}, ttl=3600)
+    return [slim(p) for p in data.get("products", [])]
 
 
 def detail(uid: str) -> dict:
@@ -107,4 +113,5 @@ def slim(p: dict, catmap: dict | None = None) -> dict:
         "thumb": thumb,
         "category": dept,
         "subcategory": aisle if aisle != dept else "",
+        "form": form(aisle, p.get("name", "")),  # ingredient | ready | frozen
     }

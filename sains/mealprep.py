@@ -28,7 +28,8 @@ PORTIONS = 4
 
 def _ok(i: dict, group: str) -> bool:
     n = i["name"].lower()
-    return bool(i["available"] and i["price"] and i["price"] <= MAX_PRICE[group] and not any(j in n for j in JUNK))
+    ready = i.get("form") == "ready" and group != "sauce"  # cook from ingredients; frozen veg is fine
+    return bool(i["available"] and i["price"] and i["price"] <= MAX_PRICE[group] and not ready and not any(j in n for j in JUNK))
 
 
 def _pick(kw: str, group: str, on_progress) -> list[dict]:
