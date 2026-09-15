@@ -59,7 +59,12 @@ def get(url: str, params: dict | None = None, ttl: int = CACHE_TTL_S, headers: d
         for attempt in range(3):
             shared.acquire_slot()  # global: one scrape per MIN_GAP_S across every instance
             _throttle()            # local: same gap within this process
-            r = _sess().get(url, params=params, headers={"Accept": "application/json", **(headers or {})}, timeout=20)
+            try:
+                r = _sess().get(url, params=params, headers={"Accept": "application/json", **(headers or {})}, timeout=20)
+            except requests.RequestsError:  # timeout / reset: Akamai tarpits instead of 403-ing sometimes — treat like a block
+                status = "timeout"
+                time.sleep(5 * 2**attempt)
+                continue
             status = r.status_code
             if status == 200:
                 data = r.json()

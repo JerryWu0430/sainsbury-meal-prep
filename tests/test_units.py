@@ -69,3 +69,20 @@ def test_short_title():
 def test_km():
     assert round(_km(51.4947, -0.0988, 51.4947, -0.0988), 3) == 0
     assert 0.5 < _km(51.4947, -0.0988, 51.5007, -0.1246) < 3  # E&C → Waterloo-ish
+
+
+def test_timeouts_trip_breaker(monkeypatch, tmp_path):
+    import sains.api as a
+    from curl_cffi import requests as cr
+
+    class Boom:
+        def get(self, *_, **__): raise cr.RequestsError("timeout")
+    monkeypatch.setattr(a, "_sess", lambda: Boom())
+    monkeypatch.setattr(a.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(a, "CACHE", tmp_path)
+    a._blocked_until = 0
+    import pytest
+    with pytest.raises(a.Blocked):
+        a.get("https://example.invalid/x")
+    assert a._blocked_until > a.time.time()
+    a._blocked_until = 0
