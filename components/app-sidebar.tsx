@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
+import { LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { logout } from "@/app/login/actions";
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail,
@@ -11,7 +13,7 @@ import { Digits } from "@/lib/transitions";
 import { StoreStatus } from "./store-status";
 import { ThemeToggle } from "./theme-toggle";
 
-export function AppSidebar() {
+export function AppSidebar({ auth }: { auth: boolean }) {
   const path = usePathname();
   const { favs } = useFavourites();
   return (
@@ -48,6 +50,11 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="group-data-[collapsible=icon]:hidden">
         <StoreStatus />
+        {auth && (
+          <form action={logout}>
+            <SidebarMenuButton type="submit" size="sm" className="text-muted-foreground"><LogOut strokeWidth={1.75} /><span>Log out</span></SidebarMenuButton>
+          </form>
+        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

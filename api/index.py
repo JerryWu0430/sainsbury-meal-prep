@@ -12,7 +12,7 @@ from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from sains import agent, dishes, mealprep, products, store
+from sains import agent, auth, dishes, mealprep, products, store
 from sains.api import Blocked
 from sains.cli import NEW_KWS, STAPLES
 from sains.config import MODEL, STORE_CODE
@@ -70,8 +70,10 @@ class Ask(BaseModel):
 
 
 @app.post("/api/ask")
-async def post_ask(body: Ask):
-    """Streams the agent's markdown answer as plain text chunks."""
+async def post_ask(body: Ask, request: Request):
+    """Streams the agent's markdown answer as plain text chunks. Login-gated: it spends the OpenAI key."""
+    if auth.enabled() and not auth.verify(request.cookies.get(auth.COOKIE)):
+        raise HTTPException(401, "log in first")
     try:
         agent.check_model()
     except agent.ConfigError as e:

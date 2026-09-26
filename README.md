@@ -14,20 +14,22 @@ Deterministic and explainable by design (no LLM needed to match); the agent has 
 
 ## Agent (`sains ask`, `/ask`)
 
-[pydantic-ai](https://ai.pydantic.dev) agent with tools over the scraper: `search_products`, `best_offers`, `meal_prep_plan`, `store_details`, `find_stores`. Instructions carry the chosen store, today's hours and the scraping etiquette (≤ 6 tool calls). The **provider is one env var** — pydantic-ai's model string is the universal adapter:
+[pydantic-ai](https://ai.pydantic.dev) agent on **OpenAI GPT** (default `openai:gpt-5.4-mini`, override with `SAINS_MODEL=openai:<model>`) with tools over the scraper: `search_products`, `best_offers`, `meal_prep_plan`, `rank_dishes`, `store_details`, `find_stores`. Instructions carry the chosen store, today's hours and the scraping etiquette (≤ 6 tool calls).
 
 ```sh
-cp .env.example .env
-SAINS_MODEL=anthropic:claude-sonnet-5        ANTHROPIC_API_KEY=…
-SAINS_MODEL=google-gla:gemini-2.5-flash      GEMINI_API_KEY=…
-SAINS_MODEL=vercel:anthropic/claude-sonnet-5 VERCEL_AI_GATEWAY_API_KEY=…   # one key, any provider
-SAINS_MODEL=test                             # no key: pydantic-ai's fake model, still runs the tools
-
+cp .env.example .env                         # OPENAI_API_KEY=…
 uv run sains ask "plan 4 lunches under £12 from today's offers"
 uv run sains chat                            # multi-turn
+SAINS_MODEL=test uv run sains ask …          # no key: pydantic-ai's fake model, still runs the tools
 ```
 
-Web: `/ask` streams the answer (`POST /api/ask {question, store}` → `text/plain` chunks). Without a key the API answers `503` with the exact env var to set. On Vercel add `SAINS_MODEL` + the key under Project → Environment Variables.
+Web: `/ask` streams the answer (`POST /api/ask {question, store}` → `text/plain` chunks). Without a key the API answers `503` naming the env var.
+
+## Login
+
+One shared password guards the dashboard and `/api/ask` (the endpoint that spends the OpenAI key). `/login` checks `APP_PASSWORD` and sets an httpOnly cookie `<exp>.<hmac(AUTH_SECRET)>`, valid 30 days. `proxy.ts` redirects pages without it, and `sains/auth.py` verifies the same cookie on `/api/ask`. The other `/api/*` routes stay public: they serve CDN-cached public data, and internal agent calls go through them. Always on on Vercel, so a missing env fails closed. Locally it's off unless `APP_PASSWORD` is set.
+
+Vercel env: `OPENAI_API_KEY`, `APP_PASSWORD`, `AUTH_SECRET` (`openssl rand -base64 32`), `CRON_SECRET` (the cron sends it to `/api/warm`).
 
 ## Location
 

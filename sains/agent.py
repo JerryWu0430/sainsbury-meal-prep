@@ -1,4 +1,4 @@
-"""pydantic-ai grocery agent. Provider is chosen by the SAINS_MODEL string (anthropic:/google-gla:/openai:/vercel:)."""
+"""pydantic-ai grocery agent on OpenAI GPT; model = SAINS_MODEL (default openai:gpt-5.4-mini)."""
 import os
 from dataclasses import dataclass
 

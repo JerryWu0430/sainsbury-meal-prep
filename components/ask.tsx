@@ -58,7 +58,7 @@ export function Ask() {
           <div key={i} className="space-y-3">
             <h2 className="font-serif text-xl leading-snug font-normal">{t.q}</h2>
             {t.error ? (
-              <p role="alert" className="text-destructive text-sm">{t.error}{t.error.startsWith("503") && " — add ANTHROPIC_API_KEY / GEMINI_API_KEY and SAINS_MODEL to the environment."}</p>
+              <p role="alert" className="text-destructive text-sm">{t.error.startsWith("401") ? <>Session expired — <a href="/login?next=/ask" className="underline">log in again</a>.</> : t.error}</p>
             ) : t.a ? (
               <div className="md text-sm leading-relaxed"><Markdown>{t.a}</Markdown></div>
             ) : (

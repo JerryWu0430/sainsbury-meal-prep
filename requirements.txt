@@ -1,6 +1,6 @@
 curl-cffi>=0.7
 fastapi>=0.115
-pydantic-ai-slim[anthropic,google,openai]>=2.43
+pydantic-ai-slim[openai]>=2.43
 python-dotenv>=1.0
 httpx>=0.27
 redis>=5
